@@ -1,0 +1,43 @@
+/* Custom styles for Rumah Daisy Cantik website */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #F8F9FA;
+    font-weight: 300; /* Lighter default font weight */
+}
+
+.youtube-bg-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.youtube-bg-wrapper iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 177.77vh; /* 100 * 16 / 9 */
+    min-width: 100%;
+    height: 56.25vw; /* 100 * 9 / 16 */
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    border: none;
+    outline: none;
+}
+
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600; /* Slightly lighter heading weight */
+}
+
+.parallax-bg {
+    background-image: url('https://rumahdaisycantik.com/wp-content/uploads/rumah-daisy-cantik-1-scaled.jpg');
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
