@@ -3,105 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Image Management</title>
+    <title>Admin Panel - Content Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
-        <h1 class="text-3xl font-bold mb-8">Manage Website Images</h1>
-        <div id="image-management-container" class="space-y-8">
-            <!-- Image sections will be dynamically added here -->
+        <h1 class="text-3xl font-bold mb-8">Manage Website Content</h1>
+        <div id="content-container" class="space-y-8">
+            <!-- Content sections will be dynamically added here -->
         </div>
+        <button id="save-all-btn" class="mt-8 bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700">Save All Changes</button>
+        <p id="save-message" class="text-sm mt-4"></p>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const container = document.getElementById('image-management-container');
+            const container = document.getElementById('content-container');
+            const saveAllBtn = document.getElementById('save-all-btn');
+            const saveMessage = document.getElementById('save-message');
+            let contentData = null;
 
-            async function fetchImages() {
+            async function fetchContent() {
                 try {
-                    const response = await fetch('/api/images');
+                    const response = await fetch('/api/content');
                     const result = await response.json();
                     if (result.success) {
-                        return result.images;
+                        contentData = result.data;
+                        renderContent();
                     } else {
-                        console.error('Failed to fetch images:', result.error);
-                        return [];
+                        console.error('Failed to fetch content:', result.error);
                     }
                 } catch (error) {
-                    console.error('Error fetching images:', error);
-                    return [];
+                    console.error('Error fetching content:', error);
                 }
             }
 
-            const images = await fetchImages();
-
-            images.forEach(imageName => {
-                const imageSrc = `images/${imageName}`;
-                const section = document.createElement('div');
-                section.className = 'bg-white p-6 rounded-lg shadow-md';
-                section.innerHTML = `
-                    <h2 class="text-xl font-semibold mb-4">${imageSrc}</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                        <div>
-                            <p class="mb-2 font-medium">Current Image:</p>
-                            <img src="${imageSrc}" alt="${imageSrc}" class="max-w-xs rounded-md border">
+            function renderContent() {
+                container.innerHTML = '';
+                contentData.images.forEach((image, index) => {
+                    const section = document.createElement('div');
+                    section.className = 'bg-white p-6 rounded-lg shadow-md';
+                    section.innerHTML = `
+                        <h2 class="text-xl font-semibold mb-4">${image.id}</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <p class="mb-2 font-medium">Current Image:</p>
+                                <img src="${image.src}" alt="${image.alt}" class="max-w-xs rounded-md border">
+                            </div>
+                            <div>
+                                <label for="src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source (URL)</label>
+                                <input type="text" id="src-${index}" value="${image.src}" class="w-full border rounded-md p-2">
+                                <label for="alt-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Alt Text</label>
+                                <input type="text" id="alt-${index}" value="${image.alt}" class="w-full border rounded-md p-2">
+                            </div>
                         </div>
-                        <div>
-                            <p class="mb-2 font-medium">Upload New Image:</p>
-                            <input type="file" id="file-input-${imageSrc.replace(/[^a-zA-Z0-9]/g, '-')}" class="w-full border rounded-md p-2">
-                            <button class="save-btn mt-4 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700" data-src="${imageSrc}">Save</button>
-                            <p class="message text-sm mt-2"></p>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(section);
-            });
+                    `;
+                    container.appendChild(section);
+                });
+            }
 
-            container.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('save-btn')) {
-                    const imageSrc = e.target.dataset.src;
-                    const fileInput = document.getElementById(`file-input-${imageSrc.replace(/[^a-zA-Z0-9]/g, '-')}`);
-                    const file = fileInput.files[0];
-                    const messageEl = e.target.nextElementSibling;
+            saveAllBtn.addEventListener('click', async () => {
+                contentData.images.forEach((image, index) => {
+                    const srcInput = document.getElementById(`src-${index}`);
+                    const altInput = document.getElementById(`alt-${index}`);
+                    image.src = srcInput.value;
+                    image.alt = altInput.value;
+                });
 
-                    if (!file) {
-                        messageEl.textContent = 'Please select a file.';
-                        messageEl.className = 'message text-sm mt-2 text-red-500';
-                        return;
+                try {
+                    saveMessage.textContent = 'Saving...';
+                    saveMessage.className = 'text-sm mt-4 text-gray-500';
+                    const response = await fetch('/api/content', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(contentData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        saveMessage.textContent = 'Content updated successfully!';
+                        saveMessage.className = 'text-sm mt-4 text-green-500';
+                        renderContent(); // Re-render to show the updated content
+                    } else {
+                        saveMessage.textContent = `Error: ${result.error}`;
+                        saveMessage.className = 'text-sm mt-4 text-red-500';
                     }
-
-                    const formData = new FormData();
-                    // We need to create a new File object with the correct name, so it overwrites the original.
-                    const newFile = new File([file], imageSrc.split('/').pop(), { type: file.type });
-                    formData.append('image', newFile);
-
-                    try {
-                        messageEl.textContent = 'Uploading...';
-                        messageEl.className = 'message text-sm mt-2 text-gray-500';
-
-                        const response = await fetch('/api/upload-image', {
-                            method: 'POST',
-                            body: formData,
-                        });
-
-                        const result = await response.json();
-
-                        if (result.success) {
-                            messageEl.textContent = 'Upload successful! The image has been updated.';
-                            messageEl.className = 'message text-sm mt-2 text-green-500';
-                            // Update the preview image
-                            const img = e.target.closest('.grid').querySelector('img');
-                            img.src = `${imageSrc}?t=${new Date().getTime()}`; // Add a timestamp to break the cache
-                        } else {
-                            messageEl.textContent = `Error: ${result.error}`;
-                            messageEl.className = 'message text-sm mt-2 text-red-500';
-                        }
-                    } catch (error) {
-                        messageEl.textContent = 'An unexpected error occurred.';
-                        messageEl.className = 'message text-sm mt-2 text-red-500';
-                    }
+                } catch (error) {
+                    saveMessage.textContent = 'An unexpected error occurred.';
+                    saveMessage.className = 'text-sm mt-4 text-red-500';
                 }
             });
+
+            fetchContent();
         });
     </script>
 </body>

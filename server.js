@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3001;
 
 // Serve static files from the current directory
 app.use(express.static('.'));
+app.use(express.json());
 
 // CORS middleware
 app.use((req, res, next) => {
@@ -60,6 +61,31 @@ app.get('/api/images', (req, res) => {
         }
         const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
         res.json({ success: true, images: imageFiles });
+    });
+});
+
+// API endpoint to get content
+app.get('/api/content', (req, res) => {
+    const contentPath = path.join(__dirname, 'content.json');
+    fs.readFile(contentPath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading content file:', err);
+            return res.status(500).json({ success: false, error: 'Could not read content file.' });
+        }
+        res.json({ success: true, data: JSON.parse(data) });
+    });
+});
+
+// API endpoint to update content
+app.post('/api/content', (req, res) => {
+    const contentPath = path.join(__dirname, 'content.json');
+    const newData = req.body;
+    fs.writeFile(contentPath, JSON.stringify(newData, null, 2), 'utf8', (err) => {
+        if (err) {
+            console.error('Error writing content file:', err);
+            return res.status(500).json({ success: false, error: 'Could not write content file.' });
+        }
+        res.json({ success: true, message: 'Content updated successfully!' });
     });
 });
 
@@ -155,6 +181,7 @@ app.listen(PORT, () => {
     console.log(`🔌 API endpoint: http://localhost:${PORT}/api/reviews`);
     console.log('🖼️ Image upload endpoint: http://localhost:${PORT}/api/upload-image');
     console.log('📸 Image list endpoint: http://localhost:${PORT}/api/images');
+    console.log('📝 Content endpoints: http://localhost:${PORT}/api/content');
     console.log('');
     console.log('🏨 Ready to fetch Rumah Daisy Cantik reviews!');
 });
