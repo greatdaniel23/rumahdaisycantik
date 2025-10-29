@@ -1,0 +1,34 @@
+{
+  "images": [
+    {
+      "id": "logo-header",
+      "src": "images/logo.png",
+      "alt": "Logo"
+    },
+    {
+      "id": "welcome-pool-view",
+      "src": "https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg",
+      "alt": "Rumah Daisy Cantik Pool View"
+    },
+    {
+      "id": "villa-1",
+      "src": "https://rumahdaisycantik.com/wp-content/uploads/5af3db9d-76e0-43ed-9a64-b0418ab4c23f.webp",
+      "alt": "Private Pool Jungle View Villa"
+    },
+    {
+      "id": "villa-2",
+      "src": "https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg",
+      "alt": "Pool & Jungle View Family Room"
+    },
+    {
+      "id": "villa-3",
+      "src": "https://rumahdaisycantik.com/wp-content/uploads/668791b4-0f86-4d1d-8310-2c8904e7e8ab.webp",
+      "alt": "Poolside Room with Lounge"
+    },
+    {
+      "id": "logo-footer",
+      "src": "images/logo.png",
+      "alt": "Logo"
+    }
+  ]
+}
