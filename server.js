@@ -177,7 +177,7 @@ app.get('/api/reviews', (req, res) => {
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
-    console.log(`📱 Website: http://localhost:${PORT}/review.html`);
+    console.log(`📱 Website: http://localhost:${PORT}/`);
     console.log(`🔌 API endpoint: http://localhost:${PORT}/api/reviews`);
     console.log('🖼️ Image upload endpoint: http://localhost:${PORT}/api/upload-image');
     console.log('📸 Image list endpoint: http://localhost:${PORT}/api/images');
