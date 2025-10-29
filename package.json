@@ -1,0 +1,32 @@
+{
+  "name": "rumah-daisy-cantik",
+  "version": "1.0.0",
+  "description": "Rumah Daisy Cantik - Villa Booking Website",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "node build.js",
+    "dev-python": "python -m http.server 3000",
+    "dev-live": "live-server --port=3001 --open=/index.html --no-browser",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "villa",
+    "bali",
+    "booking",
+    "website"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "live-server": "^1.2.2"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

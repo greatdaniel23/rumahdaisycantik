@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah Daisy Cantik - Modern Design</title>
+    
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- Google Fonts: Poppins with lighter weight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gray-50 text-gray-700">
+
+    <!-- Header Section -->
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center space-x-3">
+                <img src="images/logo.png" alt="Logo" class="h-10 sm:h-12 w-auto" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo';">
+                <span class="text-xl sm:text-2xl font-semibold text-gray-800 hidden sm:block">Rumah Daisy Cantik</span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-10">
+                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">Home</a>
+                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">About Us</a>
+                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">Villas</a>
+                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">Contact Us</a>
+                <a href="#" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">Offers</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                 <!-- CTA Button -->
+                <a href="https://daysicantik.alphadigitalagency.id/" class="bg-purple-600 text-white px-5 py-2.5 rounded-full hover:bg-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm sm:text-base font-medium">
+                    Book Now
+                </a>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">Home</a>
+            <a href="#" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">About Us</a>
+            <a href="#" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">Villas</a>
+            <a href="#" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">Contact Us</a>
+            <a href="#" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">Offers</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section with YouTube Background -->
+        <section class="relative h-[85vh] flex items-center justify-center text-white overflow-hidden">
+            <div class="absolute inset-0 bg-black/50 z-10"></div>
+            <div class="youtube-bg-wrapper">
+                <iframe 
+                    src="https://www.youtube.com/embed/XiEUOCCNbzY?autoplay=1&mute=1&loop=1&playlist=XiEUOCCNbzY&controls=0&showinfo=0&modestbranding=1&rel=0"
+                    frameborder="0" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="relative z-20 text-center p-6">
+                <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold mb-6" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">Rumah Daisy Cantik</h1>
+                <p class="max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-200" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);">
+                    Experience serene beauty and traditional charm in a stunning landscape of rice paddies and jungle.
+                </p>
+            </div>
+        </section>
+
+        <!-- Search & Booking Form Section -->
+        <section class="bg-white -mt-20 relative z-30 max-w-6xl mx-auto rounded-xl shadow-2xl p-8 md:p-12">
+            <form class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-end">
+                <div>
+                    <label for="check-in" class="block text-sm font-medium text-gray-700 mb-2">Check-in</label>
+                    <input type="date" id="check-in" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" placeholder="Check-in Date">
+                </div>
+                <div>
+                    <label for="check-out" class="block text-sm font-medium text-gray-700 mb-2">Check-out</label>
+                    <input type="date" id="check-out" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" placeholder="Check-out Date">
+                </div>
+                <div class="sm:col-span-2 lg:col-span-1">
+                    <label for="guests" class="block text-sm font-medium text-gray-700 mb-2">Guests</label>
+                    <select id="guests" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all bg-white">
+                        <option>1 Guest</option>
+                        <option selected>2 Guests</option>
+                        <option>3 Guests</option>
+                        <option>4 Guests</option>
+                        <option>5+ Guests</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-semibold text-lg sm:col-span-2 lg:col-span-1">
+                    Search
+                </button>
+            </form>
+             <p class="text-center text-xs text-gray-500 mt-4">*Babies under 2 years old stay for free</p>
+        </section>
+
+        <!-- Welcome Section -->
+        <section class="py-20 md:py-32 bg-gray-50">
+            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+                <div class="text-center md:text-left">
+                    <h2 class="text-4xl md:text-5xl font-semibold text-purple-800 mb-8">Welcome To Paradise</h2>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Rumah Daisy Cantik is located in a quiet rural area in Kaba-Kaba, Tabanan. It is an area of splendor with the natural surroundings and feeling of traditional Bali with beautiful sunsets and rice paddies all around.
+                    </p>
+                    <p class="text-gray-600 leading-relaxed">
+                        Six independent villas are nestled into the land. The main pool is at the center of the property. A place to enjoy nature, practice yoga, or take a dip after a day of exploring.
+                    </p>
+                </div>
+                <div>
+                    <img src="https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg" alt="Rumah Daisy Cantik Pool View" class="rounded-2xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-500" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Pool+View';">
+                </div>
+            </div>
+        </section>
+        
+        <!-- "A Perfect Place For" Section with Parallax Background -->
+        <section class="py-20 md:py-32 parallax-bg relative">
+            <div class="absolute inset-0 bg-black/60"></div>
+            <div class="container mx-auto px-6 text-center relative z-10 text-white">
+                <h2 class="text-4xl md:text-5xl font-semibold mb-16" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);">A Perfect Place For...</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-y-12 gap-x-8">
+                    <!-- Icons -->
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="bg-white/20 p-4 rounded-full flex items-center justify-center w-20 h-20 transform hover:scale-110 transition-transform"><i class="fas fa-spa fa-2x text-white"></i></div><span class="font-medium text-sm sm:text-base">Yoga Retreats</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="bg-white/20 p-4 rounded-full flex items-center justify-center w-20 h-20 transform hover:scale-110 transition-transform"><i class="fas fa-users fa-2x text-white"></i></div><span class="font-medium text-sm sm:text-base">Team Retreats</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="bg-white/20 p-4 rounded-full flex items-center justify-center w-20 h-20 transform hover:scale-110 transition-transform"><i class="fas fa-hand-holding-heart fa-2x text-white"></i></div><span class="font-medium text-sm sm:text-base">Fundraising</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="bg-white/20 p-4 rounded-full flex items-center justify-center w-20 h-20 transform hover:scale-110 transition-transform"><i class="fas fa-gift fa-2x text-white"></i></div><span class="font-medium text-sm sm:text-base">Celebrations</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="bg-white/20 p-4 rounded-full flex items-center justify-center w-20 h-20 transform hover:scale-110 transition-transform"><i class="fas fa-laptop fa-2x text-white"></i></div><span class="font-medium text-sm sm:text-base">Workspace</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="bg-white/20 p-4 rounded-full flex items-center justify-center w-20 h-20 transform hover:scale-110 transition-transform"><i class="fas fa-heart fa-2x text-white"></i></div><span class="font-medium text-sm sm:text-base">Weddings</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Villas Section -->
+        <section class="py-20 md:py-32 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-semibold text-purple-800">Our Accommodations</h2>
+                    <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Discover our unique villas, each offering a distinct experience of comfort and tranquility.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <!-- Villa Card 1 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300">
+                        <img class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://rumahdaisycantik.com/wp-content/uploads/5af3db9d-76e0-43ed-9a64-b0418ab4c23f.webp" alt="Private Pool Jungle View Villa" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Villa+1';">
+                        <div class="p-8">
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-3">Private Pool Jungle View Villa</h3>
+                            <p class="text-gray-600 mb-5">1 Bedroom, 1 King Bed</p>
+                            <a href="#" class="text-purple-600 font-medium hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
+                        </div>
+                    </div>
+                    <!-- Villa Card 2 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300">
+                        <img class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg" alt="Pool & Jungle View Family Room" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Villa+2';">
+                        <div class="p-8">
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-3">Pool & Jungle View Family Room</h3>
+                            <p class="text-gray-600 mb-5">1 Bedroom, 1 King Bed, 1 Single Bed</p>
+                            <a href="#" class="text-purple-600 font-medium hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
+                        </div>
+                    </div>
+                    <!-- Villa Card 3 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300">
+                        <img class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://rumahdaisycantik.com/wp-content/uploads/668791b4-0f86-4d1d-8310-2c8904e7e8ab.webp" alt="Poolside Room with Lounge" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Villa+3';">
+                        <div class="p-8">
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-3">Poolside Room with Lounge</h3>
+                            <p class="text-gray-600 mb-5">1 Bedroom, 1 King Bed</p>
+                            <a href="#" class="text-purple-600 font-medium hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Google Reviews Section -->
+        <section class="py-20 md:py-32 bg-white px-8 md:px-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-semibold text-purple-800">What Our Guests Say</h2>
+                    <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Real reviews from Google Maps - authentic experiences from our valued guests.</p>
+                    
+                    <!-- Review Statistics -->
+                    <div class="flex items-center justify-center mt-8 space-x-8">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center space-x-2">
+                                <span class="text-4xl font-bold text-yellow-500" id="overall-rating">5.0</span>
+                                <div class="text-yellow-400 text-xl">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm mt-1" id="total-reviews">18 reviews</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="bg-purple-100 px-4 py-2 rounded-full">
+                                <span class="text-purple-700 font-medium text-sm" id="api-status">Loading...</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1" id="review-source">Google Maps</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loading Spinner -->
+                <div id="loading-spinner" class="text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                    <p class="text-gray-600 mt-4">Loading authentic reviews...</p>
+                </div>
+                
+                <!-- Reviews Container -->
+                <div id="reviews-container" class="hidden">
+                    <!-- Reviews Slider -->
+                    <div class="relative max-w-7xl mx-auto">
+                        <!-- Slider Container -->
+                        <div class="reviews-slider overflow-hidden">
+                            <div class="reviews-wrapper flex transition-transform duration-500 ease-in-out" id="reviewsWrapper">
+                                <!-- Review slides will be dynamically loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation Buttons -->
+                        <button id="prevReviewBtn" class="absolute -left-6 md:-left-16 top-1/2 transform -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white rounded-full p-3 shadow-lg transition-all duration-300 z-10 hidden">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button id="nextReviewBtn" class="absolute -right-6 md:-right-16 top-1/2 transform -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white rounded-full p-3 shadow-lg transition-all duration-300 z-10 hidden">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        
+                        <!-- Dots Indicator -->
+                        <div id="reviewDots" class="flex justify-center mt-8 space-x-2">
+                            <!-- Dots will be dynamically generated -->
+                        </div>
+                    </div>
+                    
+                    <!-- Manual Reviews Section (Fallback) -->
+                    <div id="manual-reviews-section" class="hidden mt-16">
+                        <div class="text-center mb-12">
+                            <h3 class="text-2xl font-semibold text-gray-800">Featured Guest Reviews</h3>
+                            <p class="text-gray-600 mt-2">Curated testimonials from our valued guests</p>
+                        </div>
+                        <div class="relative max-w-7xl mx-auto">
+                            <div class="manual-reviews-slider overflow-hidden">
+                                <div class="manual-reviews-wrapper flex transition-transform duration-500 ease-in-out" id="manualReviewsWrapper">
+                                    <!-- Manual review slides will be shown as fallback -->
+                                </div>
+                            </div>
+                            
+                            <!-- Manual Reviews Navigation -->
+                            <button id="prevManualBtn" class="absolute -left-6 md:-left-16 top-1/2 transform -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white rounded-full p-3 shadow-lg transition-all duration-300 z-10 hidden">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button id="nextManualBtn" class="absolute -right-6 md:-right-16 top-1/2 transform -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white rounded-full p-3 shadow-lg transition-all duration-300 z-10 hidden">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            
+                            <!-- Manual Reviews Dots -->
+                            <div id="manualReviewDots" class="flex justify-center mt-8 space-x-2">
+                                <!-- Dots will be dynamically generated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error Message -->
+                <div id="error-message" class="hidden text-center py-12">
+                    <div class="text-red-500 mb-4">
+                        <i class="fas fa-exclamation-triangle text-3xl"></i>
+                    </div>
+                    <p class="text-gray-600">Unable to load reviews at this time. Please try again later.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Footer Section -->
+    <footer class="bg-purple-800 text-white">
+        <div class="container mx-auto px-6 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <!-- About -->
+                <div class="col-span-1 md:col-span-2 lg:col-span-1">
+                    <img src="images/logo.png" alt="Logo" class="h-20 w-auto mb-4" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo';">
+                    <p class="text-white text-sm">Br. Tohjiwa, Desa Kaba-Kaba, Kec. Kediri, Tabanan – Bali 82121</p>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <ul class="space-y-4 text-white text-sm">
+                        <li class="flex items-center space-x-3">
+                           <i class="fas fa-envelope w-5 h-5"></i>
+                            <span>rumahdaisycantikreservations@gmail.com</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-phone-alt w-5 h-5"></i>
+                            <span>+62 822 2119 3425</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Subscribe -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Subscribe Now</h3>
+                    <form class="flex">
+                        <input type="email" placeholder="Your Email" class="w-full px-4 py-2 rounded-l-lg bg-gray-700 border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button class="bg-purple-600 px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Send</button>
+                    </form>
+                </div>
+                
+                <!-- Map -->
+                 <div>
+                    <h3 class="text-lg font-semibold mb-4">Our Location</h3>
+                    <div class="rounded-lg overflow-hidden h-32">
+                         <iframe class="w-full h-full" src="https://maps.google.com/maps?q=br.%20Tohjiwa%2C%20Desa%20Kaba-Kaba%2C%20Kec.%20Kediri%2C%20Tabanan%20%E2%80%93%20Bali%2082121&amp;t=m&amp;z=15&amp;output=embed&amp;iwloc=near" title="Location Map" aria-label="Location Map" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-white text-sm">
+                <p>&copy; 2025 Rumah Daisy Cantik. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Set min date for check-in to today
+        const checkInInput = document.getElementById('check-in');
+        const checkOutInput = document.getElementById('check-out');
+        const today = new Date().toISOString().split('T')[0];
+        checkInInput.setAttribute('min', today);
+
+        // Set min date for check-out based on check-in
+        checkInInput.addEventListener('change', () => {
+            let checkInDate = new Date(checkInInput.value);
+            checkInDate.setDate(checkInDate.getDate() + 1);
+            let minCheckOutDate = checkInDate.toISOString().split('T')[0];
+            checkOutInput.setAttribute('min', minCheckOutDate);
+            // If checkout is before new min, clear it
+            if(checkOutInput.value < minCheckOutDate) {
+                checkOutInput.value = '';
+            }
+        });
+
+        // Google Reviews Integration
+        // Manual reviews fallback data
+        const manualReviews = [
+            {
+                name: "Daniel Suckling",
+                rating: 5,
+                text: "My partner and I hosted our birthdays here and OH MY GOSH - it has exceeded our expectations. The place is absolutely beautiful and the staff were incredible. I would highly recommend this villa! Thank you, team!",
+                date: "Recently"
+            },
+            {
+                name: "AJ Judson", 
+                rating: 5,
+                text: "Had amazing time, the staff is awesome. Everyone is super friendly, welcoming and very dedicated. The whole property is beautiful and very well taken care of. If you're looking for somewhere quiet but not too far away from town this is the spot.",
+                date: "Recently"
+            },
+            {
+                name: "Priska Widiastuti",
+                rating: 5, 
+                text: "The Best villa... friendly service and complete facilities.. calm, clean atmosphere and the children are of course happy to be invited to stay here because the swimming pool and view are beautiful... you must come back! 🥰🥰",
+                date: "Recently"
+            },
+            {
+                name: "Astara Light",
+                rating: 5,
+                text: "I stayed at Rumah Daisy Cantik for two nights and had an amazing time. The room and grounds are beautiful and so well maintained. The staff were incredibly kind and helpful. I also loved the big pool with the Buddha statue, happy rescue animals on the grounds, and delicious breakfast.",
+                date: "Recently"
+            }
+        ];
+
+        // Fetch Google Reviews
+        async function fetchGoogleReviews() {
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const reviewsContainer = document.getElementById('reviews-container');
+            const errorMessage = document.getElementById('error-message');
+            const apiStatus = document.getElementById('api-status');
+            const reviewSource = document.getElementById('review-source');
+
+            try {
+                loadingSpinner.classList.remove('hidden');
+                reviewsContainer.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+                
+                apiStatus.textContent = 'Connecting to Google Maps API...';
+                apiStatus.className = 'text-yellow-600 font-medium text-sm';
+
+                // Use our server API to avoid CORS issues
+                const response = await fetch('/api/reviews');
+                const data = await response.json();
+                
+                if (data.success && data.data.reviews) {
+                    displayGoogleReviews(data.data.reviews, data.data.rating, data.data.user_ratings_total, data.data);
+                    apiStatus.textContent = 'Live from Google Maps';
+                    apiStatus.className = 'text-purple-600 font-medium text-sm';
+                    reviewSource.textContent = 'Google Reviews';
+                } else {
+                    throw new Error(data.error || 'No reviews found in API response');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching Google reviews:', error);
+                displayManualReviews();
+                apiStatus.textContent = 'Showing Featured Reviews';
+                apiStatus.className = 'text-orange-600 font-medium text-sm';
+                reviewSource.textContent = 'Curated Reviews';
+            } finally {
+                loadingSpinner.classList.add('hidden');
+                reviewsContainer.classList.remove('hidden');
+            }
+        }
+
+        // Global slider variables
+        let currentReviewSlide = 0;
+        let totalReviewSlides = 0;
+        let reviewsPerSlide = 3; // Default: 3 reviews per slide
+        let allReviews = [];
+
+        // Determine reviews per slide based on screen size
+        function getReviewsPerSlide() {
+            if (window.innerWidth < 768) return 1; // Mobile: 1 review
+            if (window.innerWidth < 1024) return 2; // Tablet: 2 reviews
+            return 3; // Desktop: 3 reviews
+        }
+
+        // Display Google Reviews with Slider
+        function displayGoogleReviews(reviews, overallRating, totalReviews, data) {
+            const wrapper = document.getElementById('reviewsWrapper');
+            const overallRatingEl = document.getElementById('overall-rating');
+            const totalReviewsEl = document.getElementById('total-reviews');
+            
+            wrapper.innerHTML = '';
+            allReviews = reviews;
+            reviewsPerSlide = getReviewsPerSlide();
+            
+            // Update header stats
+            if (overallRating) overallRatingEl.textContent = overallRating.toFixed(1);
+            
+            const textReviewsCount = data?.text_reviews_count || reviews.length;
+            const totalCount = data?.total_reviews || totalReviews;
+            
+            if (totalReviewsEl) {
+                totalReviewsEl.innerHTML = `${totalCount} reviews<br><span class="text-sm text-purple-600">${textReviewsCount} detailed</span>`;
+            }
+            
+            // Calculate number of slides needed
+            totalReviewSlides = Math.ceil(reviews.length / reviewsPerSlide);
+            
+            // Create slides
+            for (let i = 0; i < totalReviewSlides; i++) {
+                const slide = document.createElement('div');
+                slide.className = 'w-full flex-shrink-0';
+                
+                const slideGrid = document.createElement('div');
+                slideGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4';
+                
+                // Add reviews to this slide
+                const startIndex = i * reviewsPerSlide;
+                const endIndex = Math.min(startIndex + reviewsPerSlide, reviews.length);
+                
+                for (let j = startIndex; j < endIndex; j++) {
+                    const reviewCard = createGoogleReviewCard(reviews[j]);
+                    slideGrid.appendChild(reviewCard);
+                }
+                
+                slide.appendChild(slideGrid);
+                wrapper.appendChild(slide);
+            }
+            
+            // Reset slide position
+            currentReviewSlide = 0;
+            
+            // Setup slider controls
+            setupReviewSlider();
+        }
+
+        // Display Manual Reviews with Slider
+        function displayManualReviews() {
+            const googleWrapper = document.getElementById('reviewsWrapper');
+            const manualSection = document.getElementById('manual-reviews-section');
+            const manualWrapper = document.getElementById('manualReviewsWrapper');
+            const totalReviewsEl = document.getElementById('total-reviews');
+            
+            googleWrapper.innerHTML = '';
+            manualWrapper.innerHTML = '';
+            manualSection.classList.remove('hidden');
+            
+            totalReviewsEl.innerHTML = `${manualReviews.length} featured reviews`;
+            reviewsPerSlide = getReviewsPerSlide();
+            
+            // Calculate slides for manual reviews
+            const manualSlides = Math.ceil(manualReviews.length / reviewsPerSlide);
+            
+            // Create manual review slides
+            for (let i = 0; i < manualSlides; i++) {
+                const slide = document.createElement('div');
+                slide.className = 'w-full flex-shrink-0';
+                
+                const slideGrid = document.createElement('div');
+                slideGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4';
+                
+                const startIndex = i * reviewsPerSlide;
+                const endIndex = Math.min(startIndex + reviewsPerSlide, manualReviews.length);
+                
+                for (let j = startIndex; j < endIndex; j++) {
+                    const reviewCard = createManualReviewCard(manualReviews[j]);
+                    slideGrid.appendChild(reviewCard);
+                }
+                
+                slide.appendChild(slideGrid);
+                manualWrapper.appendChild(slide);
+            }
+            
+            // Setup manual slider controls
+            setupManualReviewSlider(manualSlides);
+        }
+
+        // Setup Review Slider Controls
+        function setupReviewSlider() {
+            const wrapper = document.getElementById('reviewsWrapper');
+            const prevBtn = document.getElementById('prevReviewBtn');
+            const nextBtn = document.getElementById('nextReviewBtn');
+            const dotsContainer = document.getElementById('reviewDots');
+            
+            // Show/hide navigation based on slide count
+            if (totalReviewSlides > 1) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                
+                // Create dots
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i < totalReviewSlides; i++) {
+                    const dot = document.createElement('button');
+                    dot.className = `review-dot w-3 h-3 rounded-full transition-all duration-300 ${i === 0 ? 'bg-purple-600' : 'bg-gray-300 hover:bg-purple-400'}`;
+                    dot.setAttribute('data-slide', i);
+                    dot.addEventListener('click', () => goToReviewSlide(i));
+                    dotsContainer.appendChild(dot);
+                }
+            } else {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                dotsContainer.innerHTML = '';
+            }
+            
+            // Button event listeners
+            prevBtn.addEventListener('click', () => {
+                currentReviewSlide = (currentReviewSlide - 1 + totalReviewSlides) % totalReviewSlides;
+                updateReviewSlider();
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                currentReviewSlide = (currentReviewSlide + 1) % totalReviewSlides;
+                updateReviewSlider();
+            });
+            
+            // Auto-slide functionality
+            setInterval(() => {
+                if (totalReviewSlides > 1) {
+                    currentReviewSlide = (currentReviewSlide + 1) % totalReviewSlides;
+                    updateReviewSlider();
+                }
+            }, 8000); // Change slide every 8 seconds
+        }
+
+        // Setup Manual Review Slider Controls
+        function setupManualReviewSlider(slides) {
+            const wrapper = document.getElementById('manualReviewsWrapper');
+            const prevBtn = document.getElementById('prevManualBtn');
+            const nextBtn = document.getElementById('nextManualBtn');
+            const dotsContainer = document.getElementById('manualReviewDots');
+            let currentSlide = 0;
+            
+            if (slides > 1) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                
+                // Create dots
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i < slides; i++) {
+                    const dot = document.createElement('button');
+                    dot.className = `manual-review-dot w-3 h-3 rounded-full transition-all duration-300 ${i === 0 ? 'bg-purple-600' : 'bg-gray-300 hover:bg-purple-400'}`;
+                    dot.setAttribute('data-slide', i);
+                    dot.addEventListener('click', () => {
+                        currentSlide = i;
+                        updateManualSlider();
+                    });
+                    dotsContainer.appendChild(dot);
+                }
+                
+                function updateManualSlider() {
+                    const translateX = -currentSlide * 100;
+                    wrapper.style.transform = `translateX(${translateX}%)`;
+                    
+                    // Update dots
+                    document.querySelectorAll('.manual-review-dot').forEach((dot, index) => {
+                        if (index === currentSlide) {
+                            dot.classList.remove('bg-gray-300');
+                            dot.classList.add('bg-purple-600');
+                        } else {
+                            dot.classList.remove('bg-purple-600');
+                            dot.classList.add('bg-gray-300');
+                        }
+                    });
+                }
+                
+                prevBtn.addEventListener('click', () => {
+                    currentSlide = (currentSlide - 1 + slides) % slides;
+                    updateManualSlider();
+                });
+                
+                nextBtn.addEventListener('click', () => {
+                    currentSlide = (currentSlide + 1) % slides;
+                    updateManualSlider();
+                });
+            }
+        }
+
+        // Go to specific review slide
+        function goToReviewSlide(slideIndex) {
+            currentReviewSlide = slideIndex;
+            updateReviewSlider();
+        }
+
+        // Update Review Slider Position
+        function updateReviewSlider() {
+            const wrapper = document.getElementById('reviewsWrapper');
+            const translateX = -currentReviewSlide * 100;
+            wrapper.style.transform = `translateX(${translateX}%)`;
+            
+            // Update dots
+            document.querySelectorAll('.review-dot').forEach((dot, index) => {
+                if (index === currentReviewSlide) {
+                    dot.classList.remove('bg-gray-300');
+                    dot.classList.add('bg-purple-600');
+                } else {
+                    dot.classList.remove('bg-purple-600');
+                    dot.classList.add('bg-gray-300');
+                }
+            });
+        }
+
+        // Create Google review card
+        function createGoogleReviewCard(review) {
+            const div = document.createElement('div');
+            div.className = 'bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-purple-500';
+            
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            const authorName = review.author_name || 'Anonymous';
+            const reviewText = review.text || 'No review text available';
+            const timeAgo = review.relative_time_description || 'Recently';
+            const profilePhoto = review.profile_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=9333ea&color=fff&size=80`;
+            
+            // Format review text for better readability
+            const formattedText = formatReviewText(reviewText);
+            const showReadMore = reviewText.length > 150;
+            const truncatedText = showReadMore ? reviewText.substring(0, 150) + '...' : reviewText;
+            
+            // Calculate review quality indicators
+            const wordCount = reviewText.split(' ').length;
+            const isDetailedReview = wordCount >= 15;
+            
+            div.innerHTML = `
+                <div class="flex items-center mb-4">
+                    <img src="${profilePhoto}" alt="${authorName}" class="w-12 h-12 rounded-full mr-4 object-cover border-2 border-purple-200 shadow-md">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-800">${authorName}</h4>
+                        <p class="text-purple-600 text-sm font-medium">${timeAgo}</p>
+                        ${isDetailedReview ? '<span class="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full mt-1">Detailed Review</span>' : ''}
+                    </div>
+                </div>
+                
+                <div class="flex items-center mb-4">
+                    <span class="text-yellow-400 text-lg mr-2">${stars}</span>
+                    <span class="text-gray-600 font-medium">${review.rating}/5</span>
+                </div>
+                
+                <div class="review-text">
+                    <p class="text-gray-700 leading-relaxed ${showReadMore ? 'review-content' : ''}" ${showReadMore ? `data-full-text="${encodeURIComponent(reviewText)}"` : ''}>${showReadMore ? truncatedText : formattedText}</p>
+                    ${showReadMore ? `
+                        <button class="read-more-btn text-purple-600 hover:text-purple-700 font-medium text-sm mt-2 transition-colors duration-200">
+                            Read more
+                        </button>
+                    ` : ''}
+                </div>
+                
+                <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-100">
+                    <span class="text-sm text-purple-600 font-semibold flex items-center">
+                        <i class="fab fa-google mr-2"></i>
+                        Google Review
+                    </span>
+                    <div class="flex items-center space-x-2">
+                        ${review.rating === 5 ? '<span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">⭐ Top Rated</span>' : ''}
+                        <span class="text-xs text-gray-500">Verified</span>
+                    </div>
+                </div>
+            `;
+            
+            // Add read more functionality
+            if (showReadMore) {
+                const readMoreBtn = div.querySelector('.read-more-btn');
+                const reviewContent = div.querySelector('.review-content');
+                
+                readMoreBtn.addEventListener('click', () => {
+                    const isExpanded = readMoreBtn.textContent === 'Read less';
+                    if (isExpanded) {
+                        reviewContent.textContent = truncatedText;
+                        readMoreBtn.textContent = 'Read more';
+                    } else {
+                        reviewContent.textContent = decodeURIComponent(reviewContent.dataset.fullText);
+                        readMoreBtn.textContent = 'Read less';
+                    }
+                });
+            }
+            
+            return div;
+        }
+        
+        // Create manual review card
+        function createManualReviewCard(review) {
+            const div = document.createElement('div');
+            div.className = 'bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-purple-500';
+            
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            const profilePhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(review.name)}&background=9333ea&color=fff&size=80`;
+            
+            div.innerHTML = `
+                <div class="flex items-center mb-4">
+                    <img src="${profilePhoto}" alt="${review.name}" class="w-12 h-12 rounded-full mr-4 object-cover border-2 border-purple-100">
+                    <div>
+                        <h4 class="font-semibold text-gray-800">${review.name}</h4>
+                        <p class="text-purple-600 text-sm">${review.date}</p>
+                    </div>
+                </div>
+                <div class="flex mb-3">
+                    <span class="text-yellow-400 text-lg">${stars}</span>
+                </div>
+                <p class="text-gray-600 leading-relaxed mb-4">${review.text.length > 120 ? review.text.substring(0, 120) + '...' : review.text}</p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <span class="text-xs text-purple-600 font-medium flex items-center">
+                        <i class="fas fa-star mr-1"></i>
+                        Featured Review
+                    </span>
+                    <span class="text-xs text-gray-400">${review.rating}/5</span>
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        // Format review text for better readability
+        function formatReviewText(text) {
+            if (!text) return '';
+            
+            // Clean up common formatting issues
+            let formatted = text
+                .replace(/\s+/g, ' ') // Multiple spaces to single space
+                .replace(/([.!?])\s*([A-Z])/g, '$1 $2') // Ensure space after sentence endings
+                .trim();
+            
+            // Capitalize first letter if not already
+            if (formatted.length > 0) {
+                formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+            }
+            
+            return formatted;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchGoogleReviews();
+        });
+
+        // Handle window resize to update slider layout
+        window.addEventListener('resize', function() {
+            // Debounce resize events
+            clearTimeout(window.resizeTimeout);
+            window.resizeTimeout = setTimeout(function() {
+                const newReviewsPerSlide = getReviewsPerSlide();
+                if (newReviewsPerSlide !== reviewsPerSlide && allReviews.length > 0) {
+                    // Re-render reviews with new layout
+                    displayGoogleReviews(allReviews, 5, 18, { text_reviews_count: allReviews.length, total_reviews: 18 });
+                }
+            }, 250);
+        });
+
+    </script>
+
+</body>
+
+</html>
