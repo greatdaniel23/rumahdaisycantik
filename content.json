@@ -30,5 +30,21 @@
       "src": "images/logo.png",
       "alt": "Logo"
     }
+  ],
+  "accommodations": [
+    {
+      "id": "package-1",
+      "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg",
+      "imageAlt": "Luxury Villa with Private Pool",
+      "title": "Luxury Villa",
+      "description": "Experience the ultimate comfort in our luxury villas with a stunning private pool and jungle view."
+    },
+    {
+      "id": "package-2",
+      "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg",
+      "imageAlt": "Family Room with Pool Access",
+      "title": "Family Room",
+      "description": "Spacious rooms perfect for families, with direct access to our main pool and lounge area."
+    }
   ]
 }
