@@ -45,6 +45,13 @@
       "imageAlt": "Family Room with Pool Access",
       "title": "Family Room",
       "description": "Spacious rooms perfect for families, with direct access to our main pool and lounge area."
+    },
+    {
+      "id": "package-3",
+      "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/668791b4-0f86-4d1d-8310-2c8904e7e8ab.webp",
+      "imageAlt": "Poolside Room with Lounge",
+      "title": "Poolside Room",
+      "description": "Cozy room with a beautiful poolside view and a comfortable lounge area."
     }
   ]
 }
