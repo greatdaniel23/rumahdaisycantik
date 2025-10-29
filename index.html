@@ -87,7 +87,7 @@
 
         <!-- Search & Booking Form Section -->
         <section class="bg-white -mt-20 relative z-30 max-w-6xl mx-auto rounded-xl shadow-2xl p-8 md:p-12">
-            <form class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-end">
+            <form id="booking-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-end">
                 <div>
                     <label for="check-in" class="block text-sm font-medium text-gray-700 mb-2">Check-in</label>
                     <input type="date" id="check-in" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all" placeholder="Check-in Date">
@@ -99,15 +99,15 @@
                 <div class="sm:col-span-2 lg:col-span-1">
                     <label for="guests" class="block text-sm font-medium text-gray-700 mb-2">Guests</label>
                     <select id="guests" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all bg-white">
-                        <option>1 Guest</option>
-                        <option selected>2 Guests</option>
-                        <option>3 Guests</option>
-                        <option>4 Guests</option>
-                        <option>5+ Guests</option>
+                        <option value="1">1 Guest</option>
+                        <option value="2" selected>2 Guests</option>
+                        <option value="3">3 Guests</option>
+                        <option value="4">4 Guests</option>
+                        <option value="5">5+ Guests</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-semibold text-lg sm:col-span-2 lg:col-span-1">
-                    Search
+                <button id="search-availability-btn" type="button" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-semibold text-lg sm:col-span-2 lg:col-span-1">
+                    Search Availability
                 </button>
             </form>
              <p class="text-center text-xs text-gray-500 mt-4">*Babies under 2 years old stay for free</p>
@@ -817,6 +817,26 @@
 
             applyContent();
             fetchGoogleReviews();
+
+            // Airbnb booking form redirection
+            const searchBtn = document.getElementById('search-availability-btn');
+            const bookingForm = document.getElementById('booking-form');
+
+            searchBtn.addEventListener('click', () => {
+                const checkIn = document.getElementById('check-in').value;
+                const checkOut = document.getElementById('check-out').value;
+                const guests = document.getElementById('guests').value;
+
+                if (!checkIn || !checkOut) {
+                    alert('Please select both a check-in and check-out date.');
+                    return;
+                }
+
+                const airbnbBaseUrl = 'https://www.airbnb.com/rooms/1157539905835639687';
+                const url = `${airbnbBaseUrl}?check_in=${checkIn}&guests=${guests}&adults=${guests}&check_out=${checkOut}`;
+
+                window.open(url, '_blank');
+            });
         });
 
         // Handle window resize to update slider layout
