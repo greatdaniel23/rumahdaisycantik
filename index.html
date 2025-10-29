@@ -160,41 +160,15 @@
             </div>
         </section>
 
-        <!-- Our Villas Section -->
+        <!-- Our Accommodations Section -->
         <section class="py-20 md:py-32 bg-gray-50">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-16">
                     <h2 class="text-4xl md:text-5xl font-semibold text-purple-800">Our Accommodations</h2>
                     <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Discover our unique villas, each offering a distinct experience of comfort and tranquility.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                    <!-- Villa Card 1 -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300">
-                        <img id="villa-1" class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://rumahdaisycantik.com/wp-content/uploads/5af3db9d-76e0-43ed-9a64-b0418ab4c23f.webp" alt="Private Pool Jungle View Villa" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Villa+1';">
-                        <div class="p-8">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-3">Private Pool Jungle View Villa</h3>
-                            <p class="text-gray-600 mb-5">1 Bedroom, 1 King Bed</p>
-                            <a href="#" class="text-purple-600 font-medium hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
-                        </div>
-                    </div>
-                    <!-- Villa Card 2 -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300">
-                        <img id="villa-2" class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg" alt="Pool & Jungle View Family Room" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Villa+2';">
-                        <div class="p-8">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-3">Pool & Jungle View Family Room</h3>
-                            <p class="text-gray-600 mb-5">1 Bedroom, 1 King Bed, 1 Single Bed</p>
-                            <a href="#" class="text-purple-600 font-medium hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
-                        </div>
-                    </div>
-                    <!-- Villa Card 3 -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300">
-                        <img id="villa-3" class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://rumahdaisycantik.com/wp-content/uploads/668791b4-0f86-4d1d-8310-2c8904e7e8ab.webp" alt="Poolside Room with Lounge" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Villa+3';">
-                        <div class="p-8">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-3">Poolside Room with Lounge</h3>
-                            <p class="text-gray-600 mb-5">1 Bedroom, 1 King Bed</p>
-                            <a href="#" class="text-purple-600 font-medium hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
-                        </div>
-                    </div>
+                <div id="accommodations-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <!-- Accommodation packages will be dynamically loaded here -->
                 </div>
             </div>
         </section>
@@ -810,12 +784,30 @@
                     const response = await fetch('/api/content');
                     const content = await response.json();
                     if (content.success) {
+                        // Apply images
                         content.data.images.forEach(image => {
                             const imgElement = document.getElementById(image.id);
                             if (imgElement) {
                                 imgElement.src = image.src;
                                 imgElement.alt = image.alt;
                             }
+                        });
+
+                        // Apply accommodations
+                        const accommodationsContainer = document.getElementById('accommodations-container');
+                        accommodationsContainer.innerHTML = ''; // Clear existing content
+                        content.data.accommodations.forEach(pkg => {
+                            const packageCard = document.createElement('div');
+                            packageCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300';
+                            packageCard.innerHTML = `
+                                <img class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="${pkg.imageSrc}" alt="${pkg.imageAlt}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Image';">
+                                <div class="p-8">
+                                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">${pkg.title}</h3>
+                                    <p class="text-gray-600 mb-5">${pkg.description}</p>
+                                    <a href="#" class="text-purple-600 font-medium hover:underline">View Details <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
+                                </div>
+                            `;
+                            accommodationsContainer.appendChild(packageCard);
                         });
                     }
                 } catch (error) {
