@@ -1,6 +1,8 @@
 const express = require('express');
 const https = require('https');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,6 +15,52 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
+});
+
+// Multer configuration for image uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'images/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+const imageFileFilter = (req, file, cb) => {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+
+const upload = multer({ storage: storage, fileFilter: imageFileFilter });
+
+// API endpoint for image uploads
+app.post('/api/upload-image', (req, res) => {
+    const uploadSingle = upload.single('image');
+    uploadSingle(req, res, function (err) {
+        if (err) {
+            return res.status(400).json({ success: false, error: err.message });
+        }
+        if (!req.file) {
+            return res.status(400).json({ success: false, error: 'No file uploaded.' });
+        }
+        res.json({ success: true, message: 'Image uploaded successfully!', file: req.file });
+    });
+});
+
+// API endpoint to get the list of images
+app.get('/api/images', (req, res) => {
+    const imageDir = path.join(__dirname, 'images');
+    fs.readdir(imageDir, (err, files) => {
+        if (err) {
+            console.error('Error reading image directory:', err);
+            return res.status(500).json({ success: false, error: 'Could not read image directory.' });
+        }
+        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+        res.json({ success: true, images: imageFiles });
+    });
 });
 
 // API endpoint to get Google Places reviews (text reviews only)
@@ -105,6 +153,8 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
     console.log(`📱 Website: http://localhost:${PORT}/review.html`);
     console.log(`🔌 API endpoint: http://localhost:${PORT}/api/reviews`);
+    console.log('🖼️ Image upload endpoint: http://localhost:${PORT}/api/upload-image');
+    console.log('📸 Image list endpoint: http://localhost:${PORT}/api/images');
     console.log('');
     console.log('🏨 Ready to fetch Rumah Daisy Cantik reviews!');
 });
