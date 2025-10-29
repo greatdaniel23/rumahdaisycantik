@@ -35,7 +35,7 @@ h1, h2, h3 {
 }
 
 .parallax-bg {
-    background-image: url('https://rumahdaisycantik.com/wp-content/uploads/rumah-daisy-cantik-1-scaled.jpg');
+    background-image: url('images/parallax-bg.jpg');
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
