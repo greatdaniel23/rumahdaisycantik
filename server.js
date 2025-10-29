@@ -1,6 +1,7 @@
 const express = require('express');
 const https = require('https');
 const path = require('path');
+require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -16,34 +17,34 @@ app.use((req, res, next) => {
 
 // API endpoint to get Google Places reviews (text reviews only)
 app.get('/api/reviews', (req, res) => {
-    const API_KEY = 'AIzaSyCpvLfDbiWQMz-Dfo0sH0seoAtY2nGRGFo';
+    const API_KEY = process.env.API_KEY;
     const PLACE_ID = 'ChIJjZ5rME050i0RR9Hgjgo8HOo'; // Rumah Daisy Cantik
-    
+
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${PLACE_ID}&fields=reviews,rating,user_ratings_total,name&key=${API_KEY}`;
-    
+
     console.log('🔍 Fetching reviews from Google Maps API...');
-    
+
     https.get(url, (apiRes) => {
         let data = '';
-        
+
         apiRes.on('data', (chunk) => {
             data += chunk;
         });
-        
+
         apiRes.on('end', () => {
             try {
                 const jsonData = JSON.parse(data);
-                
+
                 if (jsonData.status === 'OK' && jsonData.result) {
                     // Filter reviews to only include those with text content
                     const allReviews = jsonData.result.reviews || [];
                     const textReviews = allReviews.filter(review => {
-                        return review.text && 
+                        return review.text &&
                                review.text.trim().length > 10 && // At least 10 characters
                                review.text.trim() !== 'No comment provided' &&
                                !review.text.trim().match(/^[\s\.\-_]*$/); // Not just spaces or punctuation
                     });
-                    
+
                     // Sort by rating (5 stars first) then by recency
                     textReviews.sort((a, b) => {
                         if (a.rating !== b.rating) {
@@ -51,17 +52,17 @@ app.get('/api/reviews', (req, res) => {
                         }
                         return new Date(b.time * 1000) - new Date(a.time * 1000); // More recent first
                     });
-                    
+
                     console.log('✅ Successfully fetched reviews');
                     console.log(`📊 Rating: ${jsonData.result.rating}/5`);
                     console.log(`📝 Total Reviews: ${allReviews.length} total, ${textReviews.length} with text`);
                     console.log(`👥 Total User Reviews: ${jsonData.result.user_ratings_total || 0}`);
-                    
+
                     // Log review quality info
                     textReviews.forEach((review, index) => {
                         console.log(`   ${index + 1}. ${review.author_name} - ${review.rating}⭐ (${review.text.length} chars)`);
                     });
-                    
+
                     res.json({
                         success: true,
                         data: {
@@ -89,7 +90,7 @@ app.get('/api/reviews', (req, res) => {
                 });
             }
         });
-        
+
     }).on('error', (err) => {
         console.error('❌ Request Error:', err.message);
         res.status(500).json({
