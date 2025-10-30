@@ -41,3 +41,19 @@ h1, h2, h3 {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+/* Keyframes for popup animation */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-in-scale {
+    animation: fadeInScale 0.3s ease-out forwards;
+}
