@@ -22,21 +22,27 @@
       "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg",
       "imageAlt": "Luxury Villa with Private Pool",
       "title": "Luxury Villa",
-      "description": "Experience the ultimate comfort in our luxury villas with a stunning private pool and jungle view."
+      "description": "Experience the ultimate comfort in our luxury villas with a stunning private pool and jungle view.",
+      "buttonText": "Book This Villa",
+      "buttonLink": "https://booking.com/villa-1"
     },
     {
       "id": "package-2",
       "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg",
       "imageAlt": "Family Room with Pool Access",
       "title": "Family Room",
-      "description": "Spacious rooms perfect for families, with direct access to our main pool and lounge area."
+      "description": "Spacious rooms perfect for families, with direct access to our main pool and lounge area.",
+      "buttonText": "View Details",
+      "buttonLink": "#"
     },
     {
       "id": "package-3",
       "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/668791b4-0f86-4d1d-8310-2c8904e7e8ab.webp",
       "imageAlt": "Poolside Room with Lounge",
       "title": "Poolside Room",
-      "description": "Cozy room with a beautiful poolside view and a comfortable lounge area."
+      "description": "Cozy room with a beautiful poolside view and a comfortable lounge area.",
+      "buttonText": "View Details",
+      "buttonLink": "#"
     }
   ],
   "popup": {
@@ -47,5 +53,32 @@
   },
   "parallax": {
     "backgroundImage": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"
-  }
+  },
+  "buttons": [
+    {
+      "id": "cta-book-now",
+      "text": "Reserve Now!",
+      "link": "https://new-booking-link.com/"
+    },
+    {
+      "id": "hero-ask-us",
+      "text": "Ask Us",
+      "link": "https://wa.me/6282221193425"
+    },
+    {
+      "id": "hero-whatsapp",
+      "text": "WhatsApp",
+      "link": "https://wa.me/6282221193425"
+    },
+    {
+      "id": "search-availability-btn",
+      "text": "Search Availability",
+      "link": ""
+    },
+    {
+      "id": "footer-subscribe-send",
+      "text": "Send",
+      "link": ""
+    }
+  ]
 }
