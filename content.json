@@ -47,5 +47,32 @@
   },
   "parallax": {
     "backgroundImage": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"
-  }
+  },
+  "buttons": [
+    {
+      "id": "cta-book-now",
+      "text": "Reserve Now!",
+      "link": "https://new-booking-link.com/"
+    },
+    {
+      "id": "hero-ask-us",
+      "text": "Ask Us",
+      "link": "https://wa.me/6282221193425"
+    },
+    {
+      "id": "hero-whatsapp",
+      "text": "WhatsApp",
+      "link": "https://wa.me/6282221193425"
+    },
+    {
+      "id": "search-availability-btn",
+      "text": "Search Availability",
+      "link": ""
+    },
+    {
+      "id": "footer-subscribe-send",
+      "text": "Send",
+      "link": ""
+    }
+  ]
 }
