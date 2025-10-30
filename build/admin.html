@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Content Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Admin Panel</h1>
+            <a href="/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Logout
+            </a>
+        </div>
+
+        <!-- Image Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Images</h2>
+            <div id="image-container" class="space-y-8">
+                <!-- Image sections will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Accommodation Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Accommodations</h2>
+            <div id="accommodation-container" class="space-y-8">
+                <!-- Accommodation sections will be dynamically added here -->
+            </div>
+            <button id="add-accommodation-btn" class="mt-6 bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600">Add New Accommodation</button>
+        </div>
+
+        <!-- Button Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Buttons</h2>
+            <div id="button-container" class="space-y-8">
+                <!-- Button sections will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Popup Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Popup</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center mb-4">
+                    <label for="popup-enabled" class="font-medium text-gray-700 mr-4">Popup Enabled</label>
+                    <input type="checkbox" id="popup-enabled" class="h-6 w-6 rounded text-purple-600 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label for="popup-title" class="block text-sm font-medium text-gray-700 mb-1">Popup Title</label>
+                    <input type="text" id="popup-title" class="w-full border rounded-md p-2 mb-4">
+                </div>
+                <div>
+                    <label for="popup-message" class="block text-sm font-medium text-gray-700 mb-1">Popup Message</label>
+                    <textarea id="popup-message" class="w-full border rounded-md p-2 h-24"></textarea>
+                </div>
+                 <div>
+                    <label for="popup-image" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Popup Image URL</label>
+                    <input type="text" id="popup-image" class="w-full border rounded-md p-2">
+                </div>
+            </div>
+        </div>
+
+        <!-- Parallax Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Parallax Background</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div>
+                    <label for="parallax-bg" class="block text-sm font-medium text-gray-700 mb-1">Background Image URL</label>
+                    <input type="text" id="parallax-bg" class="w-full border rounded-md p-2">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 border-t pt-8">
+            <button id="save-all-btn" class="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 text-lg font-semibold">Save All Changes</button>
+            <p id="save-message" class="text-sm mt-4"></p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const imageContainer = document.getElementById('image-container');
+            const accommodationContainer = document.getElementById('accommodation-container');
+            const buttonContainer = document.getElementById('button-container');
+            const saveAllBtn = document.getElementById('save-all-btn');
+            const addAccommodationBtn = document.getElementById('add-accommodation-btn');
+            const saveMessage = document.getElementById('save-message');
+            let contentData = null;
+
+            async function fetchContent() {
+                try {
+                    const response = await fetch('/api/content');
+                    const result = await response.json();
+                    if (result.success) {
+                        contentData = result.data;
+                        renderContent();
+                    } else {
+                        console.error('Failed to fetch content:', result.error);
+                    }
+                } catch (error) {
+                    console.error('Error fetching content:', error);
+                }
+            }
+
+            function renderContent() {
+                renderImages();
+                renderAccommodations();
+                renderButtons();
+                renderPopup();
+                renderParallax();
+            }
+
+            function renderImages() {
+                imageContainer.innerHTML = '';
+                contentData.images.forEach((image, index) => {
+                    const section = document.createElement('div');
+                    section.className = 'bg-white p-6 rounded-lg shadow-md';
+                    section.innerHTML = `
+                        <h3 class="text-xl font-semibold mb-4">${image.id}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <p class="mb-2 font-medium">Current Image:</p>
+                                <img src="${image.src}" alt="${image.alt}" class="max-w-xs rounded-md border">
+                            </div>
+                            <div>
+                                <label for="src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source (URL)</label>
+                                <input type="text" id="src-${index}" value="${image.src}" class="w-full border rounded-md p-2">
+                                <label for="alt-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Alt Text</label>
+                                <input type="text" id="alt-${index}" value="${image.alt}" class="w-full border rounded-md p-2">
+                            </div>
+                        </div>
+                    `;
+                    imageContainer.appendChild(section);
+                });
+            }
+
+            function renderAccommodations() {
+                accommodationContainer.innerHTML = '';
+                contentData.accommodations.forEach((pkg, index) => {
+                    const section = document.createElement('div');
+                    section.className = 'bg-white p-6 rounded-lg shadow-md relative';
+                    section.innerHTML = `
+                        <h3 class="text-xl font-semibold mb-4">Package ${index + 1}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label for="pkg-src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source</label>
+                                <input type="text" id="pkg-src-${index}" value="${pkg.imageSrc}" class="w-full border rounded-md p-2 mb-4">
+                                <img src="${pkg.imageSrc}" class="max-w-xs rounded-md border">
+                            </div>
+                            <div>
+                                <label for="pkg-alt-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Alt Text</label>
+                                <input type="text" id="pkg-alt-${index}" value="${pkg.imageAlt}" class="w-full border rounded-md p-2 mb-4">
+                                <label for="pkg-title-${index}" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                <input type="text" id="pkg-title-${index}" value="${pkg.title}" class="w-full border rounded-md p-2 mb-4">
+                                <label for="pkg-desc-${index}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea id="pkg-desc-${index}" class="w-full border rounded-md p-2 h-24">${pkg.description}</textarea>
+                                <label for="pkg-btn-text-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Text</label>
+                                <input type="text" id="pkg-btn-text-${index}" value="${pkg.buttonText || ''}" class="w-full border rounded-md p-2">
+                                <label for="pkg-btn-link-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Link</label>
+                                <input type="text" id="pkg-btn-link-${index}" value="${pkg.buttonLink || ''}" class="w-full border rounded-md p-2">
+                            </div>
+                        </div>
+                        <button class="delete-accommodation-btn absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" data-index="${index}">&times; Delete</button>
+                    `;
+                    accommodationContainer.appendChild(section);
+                });
+
+                document.querySelectorAll('.delete-accommodation-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const indexToDelete = parseInt(e.target.dataset.index, 10);
+                        contentData.accommodations.splice(indexToDelete, 1);
+                        renderAccommodations();
+                    });
+                });
+            }
+
+            function renderButtons() {
+                buttonContainer.innerHTML = '';
+                contentData.buttons.forEach((button, index) => {
+                    const section = document.createElement('div');
+                    section.className = 'bg-white p-6 rounded-lg shadow-md';
+                    section.innerHTML = `
+                        <h3 class="text-xl font-semibold mb-4">${button.id}</h3>
+                        <div>
+                            <label for="btn-text-${index}" class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+                            <input type="text" id="btn-text-${index}" value="${button.text}" class="w-full border rounded-md p-2">
+                            <label for="btn-link-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Link (URL)</label>
+                            <input type="text" id="btn-link-${index}" value="${button.link || ''}" class="w-full border rounded-md p-2">
+                        </div>
+                    `;
+                    buttonContainer.appendChild(section);
+                });
+            }
+
+            function renderPopup() {
+                if (contentData.popup) {
+                    document.getElementById('popup-enabled').checked = contentData.popup.enabled;
+                    document.getElementById('popup-title').value = contentData.popup.title;
+                    document.getElementById('popup-message').value = contentData.popup.message;
+                    document.getElementById('popup-image').value = contentData.popup.image || '';
+                }
+            }
+
+            function renderParallax() {
+                if (contentData.parallax) {
+                    document.getElementById('parallax-bg').value = contentData.parallax.backgroundImage || '';
+                }
+            }
+
+            addAccommodationBtn.addEventListener('click', () => {
+                contentData.accommodations.push({
+                    id: `package-${Date.now()}`,
+                    imageSrc: "https://placehold.co/600x400/FFFFFF/E0E0E0?text=New+Image",
+                    imageAlt: "New Accommodation",
+                    title: "New Package Title",
+                    description: "A description for the new package.",
+                    buttonText: "View Details",
+                    buttonLink: "#"
+                });
+                renderAccommodations();
+            });
+
+            saveAllBtn.addEventListener('click', async () => {
+                // Save images
+                contentData.images.forEach((image, index) => {
+                    image.src = document.getElementById(`src-${index}`).value;
+                    image.alt = document.getElementById(`alt-${index}`).value;
+                });
+
+                // Save accommodations
+                contentData.accommodations.forEach((pkg, index) => {
+                    pkg.imageSrc = document.getElementById(`pkg-src-${index}`).value;
+                    pkg.imageAlt = document.getElementById(`pkg-alt-${index}`).value;
+                    pkg.title = document.getElementById(`pkg-title-${index}`).value;
+                    pkg.description = document.getElementById(`pkg-desc-${index}`).value;
+                    pkg.buttonText = document.getElementById(`pkg-btn-text-${index}`).value;
+                    pkg.buttonLink = document.getElementById(`pkg-btn-link-${index}`).value;
+                });
+
+                // Save buttons
+                if (contentData.buttons) {
+                    contentData.buttons.forEach((button, index) => {
+                        button.text = document.getElementById(`btn-text-${index}`).value;
+                        button.link = document.getElementById(`btn-link-${index}`).value;
+                    });
+                }
+
+                // Save popup
+                if (contentData.popup) {
+                    contentData.popup.enabled = document.getElementById('popup-enabled').checked;
+                    contentData.popup.title = document.getElementById('popup-title').value;
+                    contentData.popup.message = document.getElementById('popup-message').value;
+                    contentData.popup.image = document.getElementById('popup-image').value;
+                }
+
+                // Save parallax
+                if (contentData.parallax) {
+                    contentData.parallax.backgroundImage = document.getElementById('parallax-bg').value;
+                }
+
+                try {
+                    saveMessage.textContent = 'Saving...';
+                    saveMessage.className = 'text-sm mt-4 text-gray-500';
+                    const response = await fetch('/api/content', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(contentData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        saveMessage.textContent = 'Content updated successfully!';
+                        saveMessage.className = 'text-sm mt-4 text-green-500';
+                        fetchContent(); // Re-fetch and re-render
+                    } else {
+                        saveMessage.textContent = `Error: ${result.error}`;
+                        saveMessage.className = 'text-sm mt-4 text-red-500';
+                    }
+                } catch (error) {
+                    saveMessage.textContent = 'An unexpected error occurred.';
+                    saveMessage.className = 'text-sm mt-4 text-red-500';
+                }
+            });
+
+            fetchContent();
+        });
+    </script>
+</body>
+</html>

@@ -16,7 +16,9 @@ const filesToCopy = [
     'styles.css',
     'server.js',
     'package.json',
-    '.htaccess'
+    '.htaccess',
+    'admin.html',
+    'login.html'
 ];
 
 // Copy individual files
