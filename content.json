@@ -55,8 +55,12 @@
     }
   ],
   "popup": {
-    "enabled": false,
-    "title": "Test Title",
-    "message": "Test Message"
+    "enabled": true,
+    "title": "Special Offer!",
+    "message": "Enjoy a complimentary breakfast for bookings made this week.",
+    "image": "https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg"
+  },
+  "parallax": {
+    "backgroundImage": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"
   }
 }

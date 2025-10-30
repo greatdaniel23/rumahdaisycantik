@@ -8,7 +8,12 @@
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
-        <h1 class="text-3xl font-bold mb-8">Manage Website Content</h1>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Admin Panel</h1>
+            <a href="/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Logout
+            </a>
+        </div>
 
         <!-- Image Management -->
         <div class="mb-12">
@@ -42,6 +47,21 @@
                 <div>
                     <label for="popup-message" class="block text-sm font-medium text-gray-700 mb-1">Popup Message</label>
                     <textarea id="popup-message" class="w-full border rounded-md p-2 h-24"></textarea>
+                </div>
+                 <div>
+                    <label for="popup-image" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Popup Image URL</label>
+                    <input type="text" id="popup-image" class="w-full border rounded-md p-2">
+                </div>
+            </div>
+        </div>
+
+        <!-- Parallax Management -->
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Parallax Background</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div>
+                    <label for="parallax-bg" class="block text-sm font-medium text-gray-700 mb-1">Background Image URL</label>
+                    <input type="text" id="parallax-bg" class="w-full border rounded-md p-2">
                 </div>
             </div>
         </div>
@@ -79,6 +99,7 @@
                 renderImages();
                 renderAccommodations();
                 renderPopup();
+                renderParallax();
             }
 
             function renderPopup() {
@@ -86,6 +107,13 @@
                     document.getElementById('popup-enabled').checked = contentData.popup.enabled;
                     document.getElementById('popup-title').value = contentData.popup.title;
                     document.getElementById('popup-message').value = contentData.popup.message;
+                    document.getElementById('popup-image').value = contentData.popup.image || '';
+                }
+            }
+
+            function renderParallax() {
+                if (contentData.parallax) {
+                    document.getElementById('parallax-bg').value = contentData.parallax.backgroundImage || '';
                 }
             }
 
@@ -180,6 +208,12 @@
                     contentData.popup.enabled = document.getElementById('popup-enabled').checked;
                     contentData.popup.title = document.getElementById('popup-title').value;
                     contentData.popup.message = document.getElementById('popup-message').value;
+                    contentData.popup.image = document.getElementById('popup-image').value;
+                }
+
+                // Save parallax
+                if (contentData.parallax) {
+                    contentData.parallax.backgroundImage = document.getElementById('parallax-bg').value;
                 }
 
                 try {
