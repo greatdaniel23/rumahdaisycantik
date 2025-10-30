@@ -80,5 +80,23 @@
       "text": "Send",
       "link": ""
     }
-  ]
+  ],
+  "pages": {
+    "about": {
+      "title": "About Us",
+      "content": "<h1>About Rumah Daisy Cantik</h1><p>This is the about page content. It can be edited from the admin panel.</p>"
+    },
+    "villas": {
+      "title": "Our Villas",
+      "content": "<h1>Our Villas</h1><p>This is the villas page content. It can be edited from the admin panel.</p>"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "content": "<h1>Contact Us</h1><p>This is the contact page content. It can be edited from the admin panel.</p>"
+    },
+    "offers": {
+      "title": "Special Offers",
+      "content": "<h1>Special Offers</h1><p>This is the offers page content. It can be edited from the admin panel.</p>"
+    }
+  }
 }
