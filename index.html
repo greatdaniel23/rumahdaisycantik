@@ -834,8 +834,18 @@
 
                             popupModal.classList.remove('hidden');
 
-                            document.getElementById('close-popup-btn').addEventListener('click', () => {
+                            const closeButton = document.getElementById('close-popup-btn');
+                            const popupOverlay = document.getElementById('popup-modal');
+
+                            function hidePopup() {
                                 popupModal.classList.add('hidden');
+                            }
+
+                            closeButton.addEventListener('click', hidePopup);
+                            popupOverlay.addEventListener('click', (event) => {
+                                if (event.target === popupOverlay) {
+                                    hidePopup();
+                                }
                             });
                         }
 
@@ -893,11 +903,13 @@
 
     <!-- Popup Modal -->
     <div id="popup-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale">
+        <div class="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale relative">
+            <button id="close-popup-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fas fa-times fa-lg"></i>
+            </button>
             <img id="popup-image" src="" alt="Popup Image" class="max-w-full h-auto mx-auto rounded-md mb-6 hidden max-h-48">
             <h2 id="popup-title" class="text-2xl font-bold mb-4"></h2>
             <p id="popup-message" class="mb-6"></p>
-            <button id="close-popup-btn" class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700">Close</button>
         </div>
     </div>
 
