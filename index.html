@@ -809,6 +809,18 @@
                             `;
                             accommodationsContainer.appendChild(packageCard);
                         });
+
+                        // Handle popup
+                        if (content.data.popup && content.data.popup.enabled) {
+                            const popupModal = document.getElementById('popup-modal');
+                            document.getElementById('popup-title').textContent = content.data.popup.title;
+                            document.getElementById('popup-message').textContent = content.data.popup.message;
+                            popupModal.classList.remove('hidden');
+
+                            document.getElementById('close-popup-btn').addEventListener('click', () => {
+                                popupModal.classList.add('hidden');
+                            });
+                        }
                     }
                 } catch (error) {
                     console.error('Error applying content:', error);
@@ -853,6 +865,15 @@
         });
 
     </script>
+
+    <!-- Popup Modal -->
+    <div id="popup-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center">
+            <h2 id="popup-title" class="text-2xl font-bold mb-4"></h2>
+            <p id="popup-message" class="mb-6"></p>
+            <button id="close-popup-btn" class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700">Close</button>
+        </div>
+    </div>
 
 </body>
 
