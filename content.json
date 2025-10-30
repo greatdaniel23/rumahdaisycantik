@@ -53,5 +53,10 @@
       "title": "Poolside Room",
       "description": "Cozy room with a beautiful poolside view and a comfortable lounge area."
     }
-  ]
+  ],
+  "popup": {
+    "enabled": false,
+    "title": "Test Title",
+    "message": "Test Message"
+  }
 }
