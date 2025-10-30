@@ -156,6 +156,10 @@
                                 <input type="text" id="pkg-title-${index}" value="${pkg.title}" class="w-full border rounded-md p-2 mb-4">
                                 <label for="pkg-desc-${index}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                 <textarea id="pkg-desc-${index}" class="w-full border rounded-md p-2 h-24">${pkg.description}</textarea>
+                                <label for="pkg-btn-text-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Text</label>
+                                <input type="text" id="pkg-btn-text-${index}" value="${pkg.buttonText || ''}" class="w-full border rounded-md p-2">
+                                <label for="pkg-btn-link-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Link</label>
+                                <input type="text" id="pkg-btn-link-${index}" value="${pkg.buttonLink || ''}" class="w-full border rounded-md p-2">
                             </div>
                         </div>
                         <button class="delete-accommodation-btn absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" data-index="${index}">&times; Delete</button>
@@ -211,7 +215,9 @@
                     imageSrc: "https://placehold.co/600x400/FFFFFF/E0E0E0?text=New+Image",
                     imageAlt: "New Accommodation",
                     title: "New Package Title",
-                    description: "A description for the new package."
+                    description: "A description for the new package.",
+                    buttonText: "View Details",
+                    buttonLink: "#"
                 });
                 renderAccommodations();
             });
@@ -229,6 +235,8 @@
                     pkg.imageAlt = document.getElementById(`pkg-alt-${index}`).value;
                     pkg.title = document.getElementById(`pkg-title-${index}`).value;
                     pkg.description = document.getElementById(`pkg-desc-${index}`).value;
+                    pkg.buttonText = document.getElementById(`pkg-btn-text-${index}`).value;
+                    pkg.buttonLink = document.getElementById(`pkg-btn-link-${index}`).value;
                 });
 
                 // Save buttons
