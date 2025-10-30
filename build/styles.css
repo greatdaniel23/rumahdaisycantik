@@ -35,9 +35,25 @@ h1, h2, h3 {
 }
 
 .parallax-bg {
-    background-image: url('https://rumahdaisycantik.com/wp-content/uploads/rumah-daisy-cantik-1-scaled.jpg');
+    background-image: url('images/parallax-bg.jpg');
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+/* Keyframes for popup animation */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-in-scale {
+    animation: fadeInScale 0.3s ease-out forwards;
 }
