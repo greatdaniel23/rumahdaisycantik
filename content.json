@@ -7,7 +7,7 @@
     },
     {
       "id": "welcome-pool-view",
-      "src": "https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg",
+      "src": "images/DSC07061.JPG",
       "alt": "Rumah Daisy Cantik Pool View"
     },
     {
@@ -19,7 +19,7 @@
   "accommodations": [
     {
       "id": "package-1",
-      "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg",
+      "imageSrc": "images/DSC07061.JPG",
       "imageAlt": "Luxury Villa with Private Pool",
       "title": "Luxury Villa",
       "description": "Experience the ultimate comfort in our luxury villas with a stunning private pool and jungle view.",
@@ -28,7 +28,7 @@
     },
     {
       "id": "package-2",
-      "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg",
+      "imageSrc": "images/DSC07061.JPG",
       "imageAlt": "Family Room with Pool Access",
       "title": "Family Room",
       "description": "Spacious rooms perfect for families, with direct access to our main pool and lounge area.",
@@ -37,7 +37,7 @@
     },
     {
       "id": "package-3",
-      "imageSrc": "https://rumahdaisycantik.com/wp-content/uploads/668791b4-0f86-4d1d-8310-2c8904e7e8ab.webp",
+      "imageSrc": "images/DSC07061.JPG",
       "imageAlt": "Poolside Room with Lounge",
       "title": "Poolside Room",
       "description": "Cozy room with a beautiful poolside view and a comfortable lounge area.",
@@ -49,7 +49,7 @@
     "enabled": true,
     "title": "Special Offer!",
     "message": "Enjoy a complimentary breakfast for bookings made this week.",
-    "image": "https://rumahdaisycantik.com/wp-content/uploads/1_bedroom-2_August-15.jpeg"
+    "image": "images/DSC07061.JPG"
   },
   "parallax": {
     "backgroundImage": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"

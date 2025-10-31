@@ -11,6 +11,9 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+    <!-- Image Optimization Script -->
+    <script src="image-optimizer.js" defer></script>
+
     <!-- Google Fonts: Poppins with lighter weight -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +21,191 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        /* Hero Section Styles */
+        #hero-section {
+            background-attachment: fixed;
+        }
+
+        /* Slider Styles */
+        .slider-container {
+            background: #f8f9fa;
+        }
+
+        #villa-slider {
+            transform: translateX(0);
+        }
+
+        /* Smooth transitions */
+        .slider-container:hover .absolute {
+            opacity: 1;
+        }
+
+        /* Navigation buttons hover effects */
+        #prev-btn:hover, #next-btn:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Indicator animations */
+        #slider-indicators button {
+            transition: all 0.3s ease;
+        }
+
+        #slider-indicators button:hover {
+            transform: scale(1.2);
+        }
+
+        /* Responsive text sizing */
+        @media (max-width: 768px) {
+            .slider-container {
+                margin: 0 -1.5rem;
+                border-radius: 0;
+            }
+            
+            #prev-btn, #next-btn {
+                display: none;
+            }
+        }
+
+        /* Parallax effect for hero */
+        @media (min-width: 1024px) {
+            #hero-bg {
+                background-attachment: fixed;
+            }
+        }
+
+        /* Image optimization styles */
+        .image-container {
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        .image-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            transition: opacity 0.5s ease-out;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .lazy-image {
+            transition: opacity 0.6s ease-in-out, filter 0.3s ease;
+            will-change: opacity;
+        }
+
+        .lazy-image.loading {
+            filter: blur(5px);
+        }
+
+        .lazy-image.loaded {
+            opacity: 1 !important;
+            filter: none;
+        }
+
+        .lazy-image.error {
+            filter: grayscale(100%) opacity(0.7);
+        }
+
+        /* Progressive image enhancement */
+        picture {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Performance optimizations */
+        .lazy-image {
+            content-visibility: auto;
+            contain-intrinsic-size: 1200px 700px;
+        }
+
+        /* Hero background loading */
+        #hero-bg {
+            transition: opacity 0.8s ease-in-out;
+            opacity: 0.7;
+        }
+
+        #hero-bg.loaded {
+            opacity: 1;
+        }
+
+        /* Progressive image enhancement */
+        .image-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 2;
+        }
+
+        .image-container:has(.lazy-image.loaded)::before {
+            display: none;
+        }
+
+        /* Loading animation */
+        .slider-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 1;
+        }
+
+        .slider-container.loaded::before {
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Touch/swipe support indicators */
+        @media (max-width: 1024px) {
+            .slider-container::after {
+                content: 'Swipe to navigate';
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.7);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 12px;
+                z-index: 10;
+                animation: fadeInOut 3s ease-in-out infinite;
+            }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-700">
 
@@ -63,9 +251,84 @@
     </header>
 
     <main>
-        <div id="content-container" class="container mx-auto p-8 py-16 md:py-24">
-            <!-- Content will be injected here -->
-        </div>
+        <!-- Hero Section -->
+        <section id="hero-section" class="relative h-screen flex items-center justify-center overflow-hidden">
+            <!-- Background Image -->
+            <div id="hero-bg" class="absolute inset-0 bg-cover bg-center bg-no-repeat">
+                <!-- Overlay -->
+                <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+            </div>
+            
+            <!-- Hero Content -->
+            <div class="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                    Our Beautiful <span class="text-purple-400">Villas</span>
+                </h1>
+                <p class="text-lg md:text-xl mb-8 leading-relaxed opacity-90 max-w-2xl mx-auto">
+                    Discover our collection of stunning villas and rooms, each offering a unique experience of luxury and comfort in the heart of Bali.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a id="hero-explore-btn" href="#villas-gallery" class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        Explore Our Villas
+                    </a>
+                    <a id="hero-contact-btn" href="contact.html" class="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full transition-all duration-300">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <a href="#villas-gallery" class="text-white opacity-70 hover:opacity-100 transition-opacity">
+                    <i class="fas fa-chevron-down text-2xl"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Villas Gallery Section -->
+        <section id="villas-gallery" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <!-- Section Header -->
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                        Our <span class="text-purple-600">Villa Units</span>
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        Each of our 6 villa units offers a unique experience with modern amenities, traditional Balinese design, and breathtaking views.
+                    </p>
+                </div>
+
+                <!-- Villa Slider -->
+                <div class="relative max-w-7xl mx-auto">
+                    <!-- Slider Container -->
+                    <div class="slider-container relative overflow-hidden rounded-2xl shadow-2xl">
+                        <div id="villa-slider" class="flex transition-transform duration-500 ease-in-out">
+                            <!-- Villa slides will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Slider Navigation -->
+                    <button id="prev-btn" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110 z-10">
+                        <i class="fas fa-chevron-left text-xl"></i>
+                    </button>
+                    <button id="next-btn" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-300 hover:scale-110 z-10">
+                        <i class="fas fa-chevron-right text-xl"></i>
+                    </button>
+
+                    <!-- Slider Indicators -->
+                    <div id="slider-indicators" class="flex justify-center mt-8 space-x-3">
+                        <!-- Indicators will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="text-center mt-16">
+                    <a id="cta-book-villa" href="https://daysicantik.alphadigitalagency.id/" class="inline-block bg-purple-600 hover:bg-purple-700 text-white px-12 py-4 rounded-full text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        Book Your Villa Now
+                    </a>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer Section -->
@@ -125,10 +388,298 @@
             mobileMenu.classList.toggle('hidden');
         });
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const contentContainer = document.getElementById('content-container');
+        // Image optimization utilities
+        class ImageOptimizer {
+            static supportsWebP = null;
+            static supportsAVIF = null;
 
-            async function applyContent() {
+            static async checkFormatSupport() {
+                if (this.supportsWebP === null) {
+                    this.supportsWebP = await this.canUseWebP();
+                }
+                if (this.supportsAVIF === null) {
+                    this.supportsAVIF = await this.canUseAVIF();
+                }
+            }
+
+            static canUseWebP() {
+                return new Promise(resolve => {
+                    const webP = new Image();
+                    webP.onload = webP.onerror = () => resolve(webP.height === 2);
+                    webP.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
+                });
+            }
+
+            static canUseAVIF() {
+                return new Promise(resolve => {
+                    const avif = new Image();
+                    avif.onload = avif.onerror = () => resolve(avif.height === 2);
+                    avif.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgABogQEAwgMg8f8D///8WfhwB8+ErK42A=';
+                });
+            }
+
+            static getOptimizedUrl(originalUrl, width = 1200, quality = 80, format = 'auto') {
+                // Check if it's an external URL that supports optimization
+                if (originalUrl.includes('unsplash.com')) {
+                    let params = `w=${width}&q=${quality}&auto=format&fit=crop`;
+                    if (format !== 'auto') params += `&fm=${format}`;
+                    return `${originalUrl.split('?')[0]}?${params}`;
+                } else if (originalUrl.includes('images.pexels.com')) {
+                    return `${originalUrl}?auto=compress&cs=tinysrgb&w=${width}&h=${Math.round(width * 0.6)}`;
+                } else if (originalUrl.includes('rumahdaisycantik.com')) {
+                    // For WordPress images, we can add query parameters
+                    const separator = originalUrl.includes('?') ? '&' : '?';
+                    return `${originalUrl}${separator}w=${width}&quality=${quality}`;
+                }
+                return originalUrl;
+            }
+
+            static createResponsiveSizes(baseUrl) {
+                return {
+                    small: this.getOptimizedUrl(baseUrl, 400, 75),
+                    medium: this.getOptimizedUrl(baseUrl, 800, 80),
+                    large: this.getOptimizedUrl(baseUrl, 1200, 85),
+                    xlarge: this.getOptimizedUrl(baseUrl, 1600, 90)
+                };
+            }
+
+            static generateSrcSet(baseUrl) {
+                const sizes = this.createResponsiveSizes(baseUrl);
+                return `${sizes.small} 400w, ${sizes.medium} 800w, ${sizes.large} 1200w, ${sizes.xlarge} 1600w`;
+            }
+
+            static createPictureElement(baseUrl, alt, className = '') {
+                const sources = [];
+                
+                // Add AVIF source if supported
+                if (this.supportsAVIF && baseUrl.includes('unsplash.com')) {
+                    const avifSizes = this.createResponsiveSizes(baseUrl);
+                    Object.keys(avifSizes).forEach(key => {
+                        avifSizes[key] = this.getOptimizedUrl(baseUrl, 
+                            key === 'small' ? 400 : key === 'medium' ? 800 : key === 'large' ? 1200 : 1600, 
+                            85, 'avif');
+                    });
+                    sources.push(`<source srcset="${Object.values(avifSizes).map((url, i) => 
+                        `${url} ${[400, 800, 1200, 1600][i]}w`).join(', ')}" type="image/avif">`);
+                }
+
+                // Add WebP source if supported
+                if (this.supportsWebP && baseUrl.includes('unsplash.com')) {
+                    const webpSizes = this.createResponsiveSizes(baseUrl);
+                    Object.keys(webpSizes).forEach(key => {
+                        webpSizes[key] = this.getOptimizedUrl(baseUrl, 
+                            key === 'small' ? 400 : key === 'medium' ? 800 : key === 'large' ? 1200 : 1600, 
+                            85, 'webp');
+                    });
+                    sources.push(`<source srcset="${Object.values(webpSizes).map((url, i) => 
+                        `${url} ${[400, 800, 1200, 1600][i]}w`).join(', ')}" type="image/webp">`);
+                }
+
+                return {
+                    sources: sources.join(''),
+                    fallbackSrc: this.getOptimizedUrl(baseUrl, 1200, 85),
+                    srcSet: this.generateSrcSet(baseUrl)
+                };
+            }
+        }
+
+        // Lazy loading observer
+        let imageObserver;
+
+        function initLazyLoading() {
+            const options = {
+                root: null,
+                rootMargin: '50px',
+                threshold: 0.1
+            };
+
+            imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        loadImage(img);
+                        imageObserver.unobserve(img);
+                    }
+                });
+            }, options);
+        }
+
+        function loadImage(img) {
+            const originalSrc = img.dataset.src;
+            const originalSrcSet = img.dataset.srcset;
+            if (!originalSrc) return;
+
+            // Preload the image
+            const tempImage = new Image();
+            tempImage.onload = () => {
+                img.src = originalSrc;
+                if (originalSrcSet) {
+                    img.srcset = originalSrcSet;
+                }
+                img.classList.add('loaded');
+                img.style.opacity = '1';
+                
+                // Hide placeholder with smooth transition
+                const container = img.closest('.image-container');
+                const placeholder = container.querySelector('.image-placeholder');
+                if (placeholder) {
+                    placeholder.style.opacity = '0';
+                    setTimeout(() => {
+                        if (placeholder.parentNode) {
+                            placeholder.remove();
+                        }
+                    }, 500);
+                }
+            };
+            
+            tempImage.onerror = () => {
+                img.src = 'https://placehold.co/1200x700/E0E0E0/666?text=Villa+Image';
+                img.style.opacity = '1';
+                img.classList.add('loaded');
+                const container = img.closest('.image-container');
+                const placeholder = container.querySelector('.image-placeholder');
+                if (placeholder) placeholder.remove();
+            };
+
+            tempImage.src = originalSrc;
+        }
+
+        // Villa slider functionality
+        let currentSlide = 0;
+        let villaData = [];
+
+        function createVillaSlides(accommodations) {
+            const slider = document.getElementById('villa-slider');
+            const indicators = document.getElementById('slider-indicators');
+            
+            // Ensure we have exactly 6 units (duplicate or create placeholders if needed)
+            while (accommodations.length < 6) {
+                accommodations.push({
+                    ...accommodations[accommodations.length % accommodations.length],
+                    id: `unit-${accommodations.length + 1}`,
+                    title: `Villa Unit ${accommodations.length + 1}`
+                });
+            }
+            
+            villaData = accommodations.slice(0, 6); // Take only first 6
+
+            // Create slides
+            slider.innerHTML = '';
+            indicators.innerHTML = '';
+
+            villaData.forEach((villa, index) => {
+                // Create slide
+                const slide = document.createElement('div');
+                slide.className = 'min-w-full relative';
+                const imageData = ImageOptimizer.createPictureElement(villa.imageSrc, villa.imageAlt);
+                
+                slide.innerHTML = `
+                    <div class="relative h-96 md:h-[600px] lg:h-[700px]">
+                        <div class="image-container w-full h-full relative overflow-hidden">
+                            <div class="image-placeholder absolute inset-0 bg-gray-200"></div>
+                            <picture class="w-full h-full">
+                                ${imageData.sources}
+                                <img data-src="${imageData.fallbackSrc}" 
+                                     data-srcset="${imageData.srcSet}"
+                                     alt="${villa.imageAlt}" 
+                                     class="lazy-image w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                                     loading="lazy"
+                                     decoding="async"
+                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+                                     onerror="this.src='https://placehold.co/1200x700/E0E0E0/666?text=Villa+${index + 1}'; this.classList.add('loaded');">
+                            </picture>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
+                            <div class="max-w-4xl mx-auto">
+                                <h3 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">${villa.title}</h3>
+                                <p class="text-lg md:text-xl mb-6 opacity-90 leading-relaxed max-w-2xl">${villa.description}</p>
+                                <div class="flex flex-col sm:flex-row gap-4">
+                                    <a href="${villa.buttonLink || '#'}" class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full transition-all duration-300 inline-block text-center font-semibold">
+                                        ${villa.buttonText || 'View Details'}
+                                    </a>
+                                    <a href="contact.html" class="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full transition-all duration-300 inline-block text-center">
+                                        Contact Us
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 bg-black/50 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                            Unit ${index + 1} of 6
+                        </div>
+                    </div>
+                `;
+                slider.appendChild(slide);
+
+                // Set up lazy loading for the image
+                const img = slide.querySelector('.lazy-image');
+                if (imageObserver && img) {
+                    imageObserver.observe(img);
+                }
+
+                // Create indicator
+                const indicator = document.createElement('button');
+                indicator.className = `w-4 h-4 rounded-full transition-all duration-300 ${index === 0 ? 'bg-purple-600 scale-110' : 'bg-gray-300 hover:bg-gray-400'}`;
+                indicator.addEventListener('click', () => goToSlide(index));
+                indicators.appendChild(indicator);
+            });
+        }
+
+        function updateSlider() {
+            const slider = document.getElementById('villa-slider');
+            const indicators = document.querySelectorAll('#slider-indicators button');
+            
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            indicators.forEach((indicator, index) => {
+                if (index === currentSlide) {
+                    indicator.className = 'w-4 h-4 rounded-full transition-all duration-300 bg-purple-600 scale-110';
+                } else {
+                    indicator.className = 'w-4 h-4 rounded-full transition-all duration-300 bg-gray-300 hover:bg-gray-400';
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % villaData.length;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + villaData.length) % villaData.length;
+            updateSlider();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
+
+        // Auto-play slider
+        function startAutoPlay() {
+            return setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        }
+
+        // Smooth scrolling for hero button
+        function smoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            let autoPlayInterval;
+
+            async function loadContent() {
                 try {
                     const response = await fetch('content.json');
                     const content = await response.json();
@@ -139,24 +690,126 @@
                     if(logoHeader && content.images.find(img => img.id === 'logo-header')) {
                         logoHeader.src = content.images.find(img => img.id === 'logo-header').src;
                     }
-                     if(logoFooter && content.images.find(img => img.id === 'logo-footer')) {
+                    if(logoFooter && content.images.find(img => img.id === 'logo-footer')) {
                         logoFooter.src = content.images.find(img => img.id === 'logo-footer').src;
                     }
 
-                    // Apply page content
-                    const pageContent = content.pages.villas;
-                    document.title = pageContent.title;
-                    contentContainer.innerHTML = `
-                        <h1 class="text-4xl md:text-5xl font-semibold text-purple-800 mb-8 text-center">${pageContent.title}</h1>
-                        <div class="prose lg:prose-xl max-w-4xl mx-auto text-gray-700">${pageContent.content}</div>
-                    `;
+                    // Set hero background with optimization
+                    const heroBg = document.getElementById('hero-bg');
+                    let heroImageUrl;
+                    
+                    const welcomeImage = content.images.find(img => img.id === 'welcome-pool-view');
+                    if (welcomeImage) {
+                        heroImageUrl = welcomeImage.src;
+                    } else if (content.parallax && content.parallax.backgroundImage) {
+                        heroImageUrl = content.parallax.backgroundImage;
+                    } else {
+                        heroImageUrl = 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0';
+                    }
+
+                    // Optimize hero background for different screen sizes
+                    const optimizedHeroUrl = ImageOptimizer.getOptimizedUrl(heroImageUrl, 1920, 90);
+                    
+                    // Preload hero image
+                    const heroImage = new Image();
+                    heroImage.onload = () => {
+                        heroBg.style.backgroundImage = `url('${optimizedHeroUrl}')`;
+                        heroBg.classList.add('loaded');
+                    };
+                    heroImage.src = optimizedHeroUrl;
+
+                    // Apply buttons
+                    if (content.buttons) {
+                        content.buttons.forEach(button => {
+                            const element = document.getElementById(button.id);
+                            if (element) {
+                                element.textContent = button.text;
+                                if (button.link) element.href = button.link;
+                            }
+                        });
+                    }
+
+                    // Create villa slides
+                    if (content.accommodations && content.accommodations.length > 0) {
+                        createVillaSlides([...content.accommodations]);
+                        
+                        // Start auto-play
+                        autoPlayInterval = startAutoPlay();
+                        
+                        // Pause auto-play on hover
+                        const sliderContainer = document.querySelector('.slider-container');
+                        sliderContainer.addEventListener('mouseenter', () => {
+                            clearInterval(autoPlayInterval);
+                        });
+                        sliderContainer.addEventListener('mouseleave', () => {
+                            autoPlayInterval = startAutoPlay();
+                        });
+                    }
+
+                    // Update page title
+                    if (content.pages && content.pages.villas) {
+                        document.title = content.pages.villas.title;
+                    }
+
                 } catch (error) {
-                    console.error('Error fetching content:', error);
-                    contentContainer.innerHTML = '<p class="text-center text-red-500">Error loading content.</p>';
+                    console.error('Error loading content:', error);
+                    // Fallback content
+                    document.getElementById('hero-bg').style.backgroundImage = `url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`;
                 }
             }
 
-            applyContent();
+            // Navigation event listeners
+            document.getElementById('prev-btn').addEventListener('click', prevSlide);
+            document.getElementById('next-btn').addEventListener('click', nextSlide);
+
+            // Initialize image optimization
+            await ImageOptimizer.checkFormatSupport();
+            initLazyLoading();
+
+            // Initialize smooth scrolling
+            smoothScroll();
+
+            // Load content
+            await loadContent();
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevSlide();
+                if (e.key === 'ArrowRight') nextSlide();
+            });
+
+            // Touch/swipe support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            const sliderContainer = document.querySelector('.slider-container');
+            
+            sliderContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            sliderContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        nextSlide(); // Swipe left - next slide
+                    } else {
+                        prevSlide(); // Swipe right - previous slide
+                    }
+                }
+            }
+
+            // Mark slider as loaded after content loads
+            setTimeout(() => {
+                sliderContainer.classList.add('loaded');
+            }, 1000);
         });
     </script>
 </body>

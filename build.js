@@ -21,7 +21,11 @@ const filesToCopy = [
     'contact.html',
     'offers.html',
     'content.json',
-    'reviews.js'
+    'reviews.js',
+    'image-optimizer.js',
+    'image-optimization.css',
+    'image-optimization-init.js',
+    'config.json'
 ];
 
 // Copy individual files

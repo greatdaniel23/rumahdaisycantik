@@ -12,6 +12,9 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+    <!-- Image Optimization Script -->
+    <script src="image-optimizer.js" defer></script>
+
     <!-- Google Fonts: Poppins with lighter weight -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +22,55 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        /* Image optimization styles */
+        .image-container {
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        .image-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            transition: opacity 0.5s ease-out;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .lazy-image {
+            transition: opacity 0.6s ease-in-out, filter 0.3s ease;
+            will-change: opacity;
+        }
+
+        .lazy-image.loading {
+            filter: blur(5px);
+        }
+
+        .lazy-image.loaded {
+            opacity: 1 !important;
+            filter: none;
+        }
+
+        .lazy-image.error {
+            filter: grayscale(100%) opacity(0.7);
+        }
+
+        picture {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .lazy-image {
+            content-visibility: auto;
+            contain-intrinsic-size: 600px 400px;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 text-gray-700">
@@ -134,7 +186,17 @@
                     </p>
                 </div>
                 <div>
-                    <img id="welcome-pool-view" src="https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg" alt="Rumah Daisy Cantik Pool View" class="rounded-2xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-500" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Pool+View';">
+                    <div class="image-container relative overflow-hidden rounded-2xl shadow-2xl">
+                        <div class="image-placeholder absolute inset-0 bg-gray-200"></div>
+                        <img id="welcome-pool-view" 
+                             data-src="https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg" 
+                             alt="Rumah Daisy Cantik Pool View" 
+                             class="lazy-image w-full h-auto transform hover:scale-105 transition-all duration-500 opacity-0" 
+                             loading="lazy"
+                             decoding="async"
+                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                             onerror="this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Pool+View'; this.classList.add('loaded');">
+                    </div>
                 </div>
             </div>
         </section>
@@ -807,8 +869,22 @@
                     content.accommodations.forEach(pkg => {
                         const packageCard = document.createElement('div');
                         packageCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300';
+                        const imageData = ImageOptimizer.createPictureElement(pkg.imageSrc, pkg.imageAlt);
                         packageCard.innerHTML = `
-                            <img class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="${pkg.imageSrc}" alt="${pkg.imageAlt}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Image';">
+                            <div class="image-container relative h-64 overflow-hidden">
+                                <div class="image-placeholder absolute inset-0 bg-gray-200"></div>
+                                <picture class="w-full h-full">
+                                    ${imageData.sources}
+                                    <img data-src="${imageData.fallbackSrc}" 
+                                         data-srcset="${imageData.srcSet}"
+                                         alt="${pkg.imageAlt}" 
+                                         class="lazy-image w-full h-full object-cover group-hover:scale-105 transition-all duration-500 opacity-0"
+                                         loading="lazy"
+                                         decoding="async"
+                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                                         onerror="this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Image'; this.classList.add('loaded');">
+                                </picture>
+                            </div>
                             <div class="p-8">
                                 <h3 class="text-2xl font-semibold text-gray-800 mb-3">${pkg.title}</h3>
                                 <p class="text-gray-600 mb-5">${pkg.description}</p>
@@ -830,6 +906,15 @@
                             popupImage.classList.remove('hidden');
                         } else {
                             popupImage.classList.add('hidden');
+                        }
+
+                        const ctaButton = document.getElementById('popup-cta-button');
+                        if (content.popup.buttonText && content.popup.buttonLink) {
+                            ctaButton.textContent = content.popup.buttonText;
+                            ctaButton.href = content.popup.buttonLink;
+                            ctaButton.classList.remove('hidden');
+                        } else {
+                            ctaButton.classList.add('hidden');
                         }
 
                         popupModal.classList.remove('hidden');
@@ -914,14 +999,17 @@
     </script>
 
     <!-- Popup Modal -->
-    <div id="popup-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale relative">
-            <button id="close-popup-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
-                <i class="fas fa-times fa-lg"></i>
+    <div id="popup-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale relative border-t-8 border-purple-600" style="background-image: url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');">
+            <button id="close-popup-btn" class="absolute -top-4 -right-4 bg-purple-600 text-white rounded-full h-10 w-10 flex items-center justify-center shadow-lg hover:bg-purple-700 transition-colors">
+                <i class="fas fa-times"></i>
             </button>
-            <img id="popup-image" src="" alt="Popup Image" class="max-w-full h-auto mx-auto rounded-md mb-6 hidden max-h-48">
-            <h2 id="popup-title" class="text-2xl font-bold mb-4"></h2>
-            <p id="popup-message" class="mb-6"></p>
+            <img id="popup-image" src="" alt="Popup Image" class="max-w-full h-auto mx-auto rounded-lg mb-6 hidden max-h-48 shadow-md">
+            <h2 id="popup-title" class="text-3xl font-bold mb-4 text-gray-800"></h2>
+            <p id="popup-message" class="mb-8 text-gray-600"></p>
+            <a href="#" id="popup-cta-button" class="bg-purple-600 text-white px-8 py-3 rounded-full hover:bg-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-semibold">
+                Learn More
+            </a>
         </div>
     </div>
 

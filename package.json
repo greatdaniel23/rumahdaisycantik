@@ -4,8 +4,9 @@
   "description": "Rumah Daisy Cantik - Villa Booking Website",
   "main": "index.html",
   "scripts": {
-    "build": "node generate-config.js && node build.js",
+    "build": "node generate-config.js && node build.js && node optimize-images-universal.js",
     "config": "node generate-config.js",
+    "optimize-images": "node optimize-images-universal.js",
     "dev-python": "python -m http.server 3000",
     "dev-live": "live-server --port=3001 --open=/index.html --no-browser",
     "test": "echo \"Error: no test specified\" && exit 1"

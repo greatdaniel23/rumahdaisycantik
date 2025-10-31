@@ -16,6 +16,15 @@
         </div>
 
 
+        <!-- General Images Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage General Images</h2>
+            <div id="images-container" class="space-y-8">
+                <!-- General images sections will be dynamically added here -->
+            </div>
+            <button id="add-image-btn" class="mt-6 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Add New Image</button>
+        </div>
+
         <!-- Accommodation Management -->
         <div class="mb-12">
             <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Accommodations</h2>
@@ -49,9 +58,18 @@
                     <label for="popup-message" class="block text-sm font-medium text-gray-700 mb-1">Popup Message</label>
                     <textarea id="popup-message" class="w-full border rounded-md p-2 h-24"></textarea>
                 </div>
+                <div>
+                    <label for="popup-button-text" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Popup Button Text</label>
+                    <input type="text" id="popup-button-text" class="w-full border rounded-md p-2 mb-4">
+                </div>
+                <div>
+                    <label for="popup-button-link" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Popup Button Link</label>
+                    <input type="text" id="popup-button-link" class="w-full border rounded-md p-2 mb-4">
+                </div>
                  <div>
                     <label for="popup-image" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Popup Image URL</label>
-                    <input type="text" id="popup-image" class="w-full border rounded-md p-2">
+                    <input type="text" id="popup-image" class="w-full border rounded-md p-2 mb-2" onchange="updatePopupImagePreview()">
+                    <div id="popup-image-preview" class="mt-2"></div>
                 </div>
             </div>
         </div>
@@ -62,7 +80,8 @@
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <div>
                     <label for="parallax-bg" class="block text-sm font-medium text-gray-700 mb-1">Background Image URL</label>
-                    <input type="text" id="parallax-bg" class="w-full border rounded-md p-2">
+                    <input type="text" id="parallax-bg" class="w-full border rounded-md p-2 mb-2" onchange="updateParallaxImagePreview()">
+                    <div id="parallax-image-preview" class="mt-2"></div>
                 </div>
             </div>
         </div>
@@ -107,10 +126,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            const imagesContainer = document.getElementById('images-container');
             const accommodationContainer = document.getElementById('accommodation-container');
             const buttonContainer = document.getElementById('button-container');
             const saveAllBtn = document.getElementById('save-all-btn');
             const addAccommodationBtn = document.getElementById('add-accommodation-btn');
+            const addImageBtn = document.getElementById('add-image-btn');
             const saveMessage = document.getElementById('save-message');
             let contentData = null;
 
@@ -125,6 +146,7 @@
             }
 
             function renderContent() {
+                renderImages();
                 renderAccommodations();
                 renderButtons();
                 renderPopup();
@@ -132,6 +154,45 @@
                 renderPages();
             }
 
+
+            function renderImages() {
+                imagesContainer.innerHTML = '';
+                if (contentData.images && contentData.images.length > 0) {
+                    contentData.images.forEach((img, index) => {
+                        const section = document.createElement('div');
+                        section.className = 'bg-white p-6 rounded-lg shadow-md relative';
+                        section.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-4">Image: ${img.id || `Image ${index + 1}`}</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <label for="img-src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source URL</label>
+                                    <input type="text" id="img-src-${index}" value="${img.src}" class="w-full border rounded-md p-2 mb-4">
+                                    <img src="${img.src}" class="max-w-xs rounded-md border" onerror="this.src='https://placehold.co/300x200/E0E0E0/666?text=Image+Not+Found'">
+                                </div>
+                                <div>
+                                    <label for="img-id-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image ID</label>
+                                    <input type="text" id="img-id-${index}" value="${img.id || ''}" class="w-full border rounded-md p-2 mb-4">
+                                    <label for="img-alt-${index}" class="block text-sm font-medium text-gray-700 mb-1">Alt Text</label>
+                                    <input type="text" id="img-alt-${index}" value="${img.alt || ''}" class="w-full border rounded-md p-2">
+                                </div>
+                            </div>
+                            <button class="delete-image-btn absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" data-index="${index}">&times; Delete</button>
+                        `;
+                        imagesContainer.appendChild(section);
+                    });
+
+                    // Add delete event listeners
+                    document.querySelectorAll('.delete-image-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const indexToDelete = parseInt(e.target.dataset.index, 10);
+                            contentData.images.splice(indexToDelete, 1);
+                            renderImages();
+                        });
+                    });
+                } else {
+                    imagesContainer.innerHTML = '<p class="text-gray-500 italic">No general images found. Click "Add New Image" to create one.</p>';
+                }
+            }
 
             function renderAccommodations() {
                 accommodationContainer.innerHTML = '';
@@ -197,12 +258,36 @@
                     document.getElementById('popup-title').value = contentData.popup.title;
                     document.getElementById('popup-message').value = contentData.popup.message;
                     document.getElementById('popup-image').value = contentData.popup.image || '';
+                    document.getElementById('popup-button-text').value = contentData.popup.buttonText || '';
+                    document.getElementById('popup-button-link').value = contentData.popup.buttonLink || '';
+                    updatePopupImagePreview();
+                }
+            }
+
+            function updatePopupImagePreview() {
+                const imageUrl = document.getElementById('popup-image').value;
+                const previewDiv = document.getElementById('popup-image-preview');
+                if (imageUrl.trim()) {
+                    previewDiv.innerHTML = `<img src="${imageUrl}" class="max-w-xs rounded-md border" onerror="this.src='https://placehold.co/300x200/E0E0E0/666?text=Image+Not+Found'" alt="Popup Image Preview">`;
+                } else {
+                    previewDiv.innerHTML = '';
                 }
             }
 
             function renderParallax() {
                 if (contentData.parallax) {
                     document.getElementById('parallax-bg').value = contentData.parallax.backgroundImage || '';
+                    updateParallaxImagePreview();
+                }
+            }
+
+            function updateParallaxImagePreview() {
+                const imageUrl = document.getElementById('parallax-bg').value;
+                const previewDiv = document.getElementById('parallax-image-preview');
+                if (imageUrl.trim()) {
+                    previewDiv.innerHTML = `<img src="${imageUrl}" class="max-w-xs rounded-md border" onerror="this.src='https://placehold.co/300x200/E0E0E0/666?text=Image+Not+Found'" alt="Parallax Background Preview">`;
+                } else {
+                    previewDiv.innerHTML = '';
                 }
             }
 
@@ -228,6 +313,18 @@
                 }
             }
 
+            addImageBtn.addEventListener('click', () => {
+                if (!contentData.images) {
+                    contentData.images = [];
+                }
+                contentData.images.push({
+                    id: `image-${Date.now()}`,
+                    src: "https://placehold.co/400x300/FFFFFF/E0E0E0?text=New+Image",
+                    alt: "New Image"
+                });
+                renderImages();
+            });
+
             addAccommodationBtn.addEventListener('click', () => {
                 contentData.accommodations.push({
                     id: `package-${Date.now()}`,
@@ -242,6 +339,15 @@
             });
 
             saveAllBtn.addEventListener('click', async () => {
+                // Save general images
+                if (contentData.images) {
+                    contentData.images.forEach((img, index) => {
+                        img.src = document.getElementById(`img-src-${index}`).value;
+                        img.id = document.getElementById(`img-id-${index}`).value;
+                        img.alt = document.getElementById(`img-alt-${index}`).value;
+                    });
+                }
+
                 // Save accommodations
                 contentData.accommodations.forEach((pkg, index) => {
                     pkg.imageSrc = document.getElementById(`pkg-src-${index}`).value;
@@ -266,6 +372,8 @@
                     contentData.popup.title = document.getElementById('popup-title').value;
                     contentData.popup.message = document.getElementById('popup-message').value;
                     contentData.popup.image = document.getElementById('popup-image').value;
+                    contentData.popup.buttonText = document.getElementById('popup-button-text').value;
+                    contentData.popup.buttonLink = document.getElementById('popup-button-link').value;
                 }
 
                 // Save parallax
