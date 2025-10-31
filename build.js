@@ -14,16 +14,14 @@ fs.mkdirSync(buildDir);
 const filesToCopy = [
     'index.html',
     'styles.css',
-    'server.js',
-    'package.json',
-    '.htaccess',
     'admin.html',
     'login.html',
     'about.html',
     'villas.html',
     'contact.html',
     'offers.html',
-    'content.json'
+    'content.json',
+    'reviews.js'
 ];
 
 // Copy individual files
@@ -44,12 +42,12 @@ function copyDirectory(src, dest) {
     if (!fs.existsSync(dest)) {
         fs.mkdirSync(dest, { recursive: true });
     }
-    
+
     const items = fs.readdirSync(src);
     items.forEach(item => {
         const srcPath = path.join(src, item);
         const destPath = path.join(dest, item);
-        
+
         if (fs.statSync(srcPath).isDirectory()) {
             copyDirectory(srcPath, destPath);
         } else {
@@ -63,5 +61,4 @@ console.log('🎉 Build complete!');
 console.log('📁 Files ready in ./build folder');
 console.log('');
 console.log('📤 Upload ./build contents to your cPanel public_html');
-console.log('🔧 If Node.js supported: run "npm install express" on server');
 console.log('');

@@ -1,23 +1,36 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Rumah Daisy Cantik</title>
+    <title>About Us</title>
+
+    <!-- Tailwind CSS for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Google Fonts: Poppins with lighter weight -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-50 text-gray-700">
+
+    <!-- Header Section -->
     <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50 transition-all duration-300">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-3">
-                <img id="logo-header" src="images/logo.png" alt="Logo" class="h-10 sm:h-12 w-auto">
+            <!-- Logo -->
+            <a href="#" class="flex items-center space-x-3">
+                <img id="logo-header" src="images/logo.png" alt="Logo" class="h-10 sm:h-12 w-auto" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo';">
                 <span class="text-xl sm:text-2xl font-semibold text-gray-800 hidden sm:block">Rumah Daisy Cantik</span>
             </a>
+
+            <!-- Desktop Navigation -->
             <nav class="hidden md:flex items-center space-x-10">
                 <a href="index.html" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">Home</a>
                 <a href="about.html" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">About Us</a>
@@ -25,10 +38,13 @@
                 <a href="contact.html" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">Contact Us</a>
                 <a href="offers.html" class="text-gray-600 hover:text-purple-600 transition-colors duration-300 font-normal">Offers</a>
             </nav>
+
             <div class="flex items-center space-x-4">
+                 <!-- CTA Button -->
                 <a id="cta-book-now" href="https://daysicantik.alphadigitalagency.id/" class="bg-purple-600 text-white px-5 py-2.5 rounded-full hover:bg-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm sm:text-base font-medium">
                     Book Now
                 </a>
+                <!-- Mobile Menu Button -->
                 <div class="md:hidden">
                     <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
                         <i class="fas fa-bars fa-lg"></i>
@@ -36,6 +52,7 @@
                 </div>
             </div>
         </div>
+        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden">
             <a href="index.html" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">Home</a>
             <a href="about.html" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">About Us</a>
@@ -44,18 +61,24 @@
             <a href="offers.html" class="block px-6 py-3 text-gray-600 hover:bg-gray-100 transition-colors">Offers</a>
         </div>
     </header>
+
     <main>
-        <div id="page-content" class="container mx-auto px-6 py-20">
-            <!-- Dynamic content will be loaded here -->
+        <div id="content-container" class="container mx-auto p-8 py-16 md:py-24">
+            <!-- Content will be injected here -->
         </div>
     </main>
+
+    <!-- Footer Section -->
     <footer class="bg-purple-800 text-white">
         <div class="container mx-auto px-6 py-16">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <!-- About -->
                 <div class="col-span-1 md:col-span-2 lg:col-span-1">
-                    <img id="logo-footer" src="images/logo.png" alt="Logo" class="h-20 w-auto mb-4">
+                    <img id="logo-footer" src="images/logo.png" alt="Logo" class="h-20 w-auto mb-4" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo';">
                     <p class="text-white text-sm">Br. Tohjiwa, Desa Kaba-Kaba, Kec. Kediri, Tabanan – Bali 82121</p>
                 </div>
+
+                <!-- Contact -->
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
                     <ul class="space-y-4 text-white text-sm">
@@ -69,6 +92,8 @@
                         </li>
                     </ul>
                 </div>
+
+                <!-- Subscribe -->
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Subscribe Now</h3>
                     <form class="flex">
@@ -76,6 +101,8 @@
                         <button id="footer-subscribe-send" class="bg-purple-600 px-4 rounded-r-lg hover:bg-purple-700 transition-colors">Send</button>
                     </form>
                 </div>
+
+                <!-- Map -->
                  <div>
                     <h3 class="text-lg font-semibold mb-4">Our Location</h3>
                     <div class="rounded-lg overflow-hidden h-32">
@@ -88,27 +115,48 @@
             </div>
         </div>
     </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
 
-            const pageContent = document.getElementById('page-content');
-            try {
-                const response = await fetch('/api/content');
-                const contentData = await response.json();
-                if (contentData.success && contentData.data.pages && contentData.data.pages.about) {
-                    pageContent.innerHTML = contentData.data.pages.about.content;
-                } else {
-                     pageContent.innerHTML = '<p>Content not found.</p>';
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const contentContainer = document.getElementById('content-container');
+
+            async function applyContent() {
+                try {
+                    const response = await fetch('content.json');
+                    const content = await response.json();
+
+                    // Apply logos
+                    const logoHeader = document.getElementById('logo-header');
+                    const logoFooter = document.getElementById('logo-footer');
+                    if(logoHeader && content.images.find(img => img.id === 'logo-header')) {
+                        logoHeader.src = content.images.find(img => img.id === 'logo-header').src;
+                    }
+                     if(logoFooter && content.images.find(img => img.id === 'logo-footer')) {
+                        logoFooter.src = content.images.find(img => img.id === 'logo-footer').src;
+                    }
+
+                    // Apply page content
+                    const pageContent = content.pages.about;
+                    document.title = pageContent.title;
+                    contentContainer.innerHTML = `
+                        <h1 class="text-4xl md:text-5xl font-semibold text-purple-800 mb-8 text-center">${pageContent.title}</h1>
+                        <div class="prose lg:prose-xl max-w-4xl mx-auto text-gray-700">${pageContent.content}</div>
+                    `;
+                } catch (error) {
+                    console.error('Error fetching content:', error);
+                    contentContainer.innerHTML = '<p class="text-center text-red-500">Error loading content.</p>';
                 }
-            } catch (error) {
-                console.error('Error fetching page content:', error);
-                pageContent.innerHTML = '<p>Error loading content.</p>';
             }
+
+            applyContent();
         });
     </script>
 </body>

@@ -10,18 +10,11 @@
     <div class="container mx-auto p-8">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold">Admin Panel</h1>
-            <a href="/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            <a href="login.html" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                 Logout
             </a>
         </div>
 
-        <!-- Image Management -->
-        <div class="mb-12">
-            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Images</h2>
-            <div id="image-container" class="space-y-8">
-                <!-- Image sections will be dynamically added here -->
-            </div>
-        </div>
 
         <!-- Accommodation Management -->
         <div class="mb-12">
@@ -83,13 +76,12 @@
         </div>
 
         <div class="mt-12 border-t pt-8">
-            <button id="save-all-btn" class="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 text-lg font-semibold">Save All Changes</button>
+            <button id="save-all-btn" class="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 text-lg font-semibold">Save and Download content.json</button>
             <p id="save-message" class="text-sm mt-4"></p>
         </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const imageContainer = document.getElementById('image-container');
             const accommodationContainer = document.getElementById('accommodation-container');
             const buttonContainer = document.getElementById('button-container');
             const saveAllBtn = document.getElementById('save-all-btn');
@@ -99,21 +91,15 @@
 
             async function fetchContent() {
                 try {
-                    const response = await fetch('/api/content');
-                    const result = await response.json();
-                    if (result.success) {
-                        contentData = result.data;
-                        renderContent();
-                    } else {
-                        console.error('Failed to fetch content:', result.error);
-                    }
+                    const response = await fetch('content.json');
+                    contentData = await response.json();
+                    renderContent();
                 } catch (error) {
                     console.error('Error fetching content:', error);
                 }
             }
 
             function renderContent() {
-                renderImages();
                 renderAccommodations();
                 renderButtons();
                 renderPopup();
@@ -121,29 +107,6 @@
                 renderPages();
             }
 
-            function renderImages() {
-                imageContainer.innerHTML = '';
-                contentData.images.forEach((image, index) => {
-                    const section = document.createElement('div');
-                    section.className = 'bg-white p-6 rounded-lg shadow-md';
-                    section.innerHTML = `
-                        <h3 class="text-xl font-semibold mb-4">${image.id}</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                            <div>
-                                <p class="mb-2 font-medium">Current Image:</p>
-                                <img src="${image.src}" alt="${image.alt}" class="max-w-xs rounded-md border">
-                            </div>
-                            <div>
-                                <label for="src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source (URL)</label>
-                                <input type="text" id="src-${index}" value="${image.src}" class="w-full border rounded-md p-2">
-                                <label for="alt-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Alt Text</label>
-                                <input type="text" id="alt-${index}" value="${image.alt}" class="w-full border rounded-md p-2">
-                            </div>
-                        </div>
-                    `;
-                    imageContainer.appendChild(section);
-                });
-            }
 
             function renderAccommodations() {
                 accommodationContainer.innerHTML = '';
@@ -254,12 +217,6 @@
             });
 
             saveAllBtn.addEventListener('click', async () => {
-                // Save images
-                contentData.images.forEach((image, index) => {
-                    image.src = document.getElementById(`src-${index}`).value;
-                    image.alt = document.getElementById(`alt-${index}`).value;
-                });
-
                 // Save accommodations
                 contentData.accommodations.forEach((pkg, index) => {
                     pkg.imageSrc = document.getElementById(`pkg-src-${index}`).value;
@@ -303,27 +260,17 @@
                   delete contentData.__v;
                 }
 
-                try {
-                    saveMessage.textContent = 'Saving...';
-                    saveMessage.className = 'text-sm mt-4 text-gray-500';
-                    const response = await fetch('/api/content', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(contentData)
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        saveMessage.textContent = 'Content updated successfully!';
-                        saveMessage.className = 'text-sm mt-4 text-green-500';
-                        fetchContent(); // Re-fetch and re-render
-                    } else {
-                        saveMessage.textContent = `Error: ${result.error}`;
-                        saveMessage.className = 'text-sm mt-4 text-red-500';
-                    }
-                } catch (error) {
-                    saveMessage.textContent = 'An unexpected error occurred.';
-                    saveMessage.className = 'text-sm mt-4 text-red-500';
-                }
+                const blob = new Blob([JSON.stringify(contentData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'content.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                saveMessage.textContent = 'content.json has been downloaded!';
+                saveMessage.className = 'text-sm mt-4 text-green-500';
             });
 
             fetchContent();

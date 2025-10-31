@@ -405,7 +405,7 @@
                 apiStatus.className = 'text-yellow-600 font-medium text-sm';
 
                 // Use our server API to avoid CORS issues
-                const response = await fetch('/api/reviews');
+                const response = await fetch('./reviews');
                 const data = await response.json();
 
                 if (data.success && data.data.reviews) {
@@ -789,86 +789,85 @@
             // Fetch and apply content
             async function applyContent() {
                 try {
-                    const response = await fetch('/api/content');
+                    const response = await fetch('content.json');
                     const content = await response.json();
-                    if (content.success) {
-                        // Apply images
-                        content.data.images.forEach(image => {
-                            const imgElement = document.getElementById(image.id);
-                            if (imgElement) {
-                                imgElement.src = image.src;
-                                imgElement.alt = image.alt;
+
+                    // Apply images
+                    content.images.forEach(image => {
+                        const imgElement = document.getElementById(image.id);
+                        if (imgElement) {
+                            imgElement.src = image.src;
+                            imgElement.alt = image.alt;
+                        }
+                    });
+
+                    // Apply accommodations
+                    const accommodationsContainer = document.getElementById('accommodations-container');
+                    accommodationsContainer.innerHTML = ''; // Clear existing content
+                    content.accommodations.forEach(pkg => {
+                        const packageCard = document.createElement('div');
+                        packageCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300';
+                        packageCard.innerHTML = `
+                            <img class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="${pkg.imageSrc}" alt="${pkg.imageAlt}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Image';">
+                            <div class="p-8">
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-3">${pkg.title}</h3>
+                                <p class="text-gray-600 mb-5">${pkg.description}</p>
+                                <a href="${pkg.buttonLink}" class="text-purple-600 font-medium hover:underline">${pkg.buttonText} <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
+                            </div>
+                        `;
+                        accommodationsContainer.appendChild(packageCard);
+                    });
+
+                    // Handle popup
+                    if (content.popup && content.popup.enabled) {
+                        const popupModal = document.getElementById('popup-modal');
+                        document.getElementById('popup-title').textContent = content.popup.title;
+                        document.getElementById('popup-message').textContent = content.popup.message;
+
+                        const popupImage = document.getElementById('popup-image');
+                        if (content.popup.image) {
+                            popupImage.src = content.popup.image;
+                            popupImage.classList.remove('hidden');
+                        } else {
+                            popupImage.classList.add('hidden');
+                        }
+
+                        popupModal.classList.remove('hidden');
+
+                        const closeButton = document.getElementById('close-popup-btn');
+                        const popupOverlay = document.getElementById('popup-modal');
+
+                        function hidePopup() {
+                            popupModal.classList.add('hidden');
+                        }
+
+                        closeButton.addEventListener('click', hidePopup);
+                        popupOverlay.addEventListener('click', (event) => {
+                            if (event.target === popupOverlay) {
+                                hidePopup();
                             }
                         });
+                    }
 
-                        // Apply accommodations
-                        const accommodationsContainer = document.getElementById('accommodations-container');
-                        accommodationsContainer.innerHTML = ''; // Clear existing content
-                        content.data.accommodations.forEach(pkg => {
-                            const packageCard = document.createElement('div');
-                            packageCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300';
-                            packageCard.innerHTML = `
-                                <img class="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-500" src="${pkg.imageSrc}" alt="${pkg.imageAlt}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Image';">
-                                <div class="p-8">
-                                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">${pkg.title}</h3>
-                                    <p class="text-gray-600 mb-5">${pkg.description}</p>
-                                    <a href="${pkg.buttonLink}" class="text-purple-600 font-medium hover:underline">${pkg.buttonText} <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
-                                </div>
-                            `;
-                            accommodationsContainer.appendChild(packageCard);
+                    // Apply parallax background
+                    if (content.parallax && content.parallax.backgroundImage) {
+                        const parallaxElement = document.querySelector('.parallax-bg');
+                        if (parallaxElement) {
+                            parallaxElement.style.backgroundImage = `url('${content.parallax.backgroundImage}')`;
+                        }
+                    }
+
+                    // Apply buttons
+                    if (content.buttons) {
+                        content.buttons.forEach(button => {
+                            const btnElement = document.getElementById(button.id);
+                            if (btnElement) {
+                                btnElement.textContent = button.text;
+                                if (btnElement.tagName === 'A' && button.link) {
+                                    btnElement.href = button.link;
+                                }
+                            }
                         });
-
-                        // Handle popup
-                        if (content.data.popup && content.data.popup.enabled) {
-                            const popupModal = document.getElementById('popup-modal');
-                            document.getElementById('popup-title').textContent = content.data.popup.title;
-                            document.getElementById('popup-message').textContent = content.data.popup.message;
-
-                            const popupImage = document.getElementById('popup-image');
-                            if (content.data.popup.image) {
-                                popupImage.src = content.data.popup.image;
-                                popupImage.classList.remove('hidden');
-                            } else {
-                                popupImage.classList.add('hidden');
-                            }
-
-                            popupModal.classList.remove('hidden');
-
-                            const closeButton = document.getElementById('close-popup-btn');
-                            const popupOverlay = document.getElementById('popup-modal');
-
-                            function hidePopup() {
-                                popupModal.classList.add('hidden');
-                            }
-
-                            closeButton.addEventListener('click', hidePopup);
-                            popupOverlay.addEventListener('click', (event) => {
-                                if (event.target === popupOverlay) {
-                                    hidePopup();
-                                }
-                            });
-                        }
-
-                        // Apply parallax background
-                        if (content.data.parallax && content.data.parallax.backgroundImage) {
-                            const parallaxElement = document.querySelector('.parallax-bg');
-                            if (parallaxElement) {
-                                parallaxElement.style.backgroundImage = `url('${content.data.parallax.backgroundImage}')`;
-                            }
-                        }
-
-                        // Apply buttons
-                        if (content.data.buttons) {
-                            content.data.buttons.forEach(button => {
-                                const btnElement = document.getElementById(button.id);
-                                if (btnElement) {
-                                    btnElement.textContent = button.text;
-                                    if (btnElement.tagName === 'A' && button.link) {
-                                        btnElement.href = button.link;
-                                    }
-                                }
-                            });
-                        }
                     }
                 } catch (error) {
                     console.error('Error applying content:', error);
