@@ -32,19 +32,60 @@
     </div>
 
     <script>
-        document.getElementById('login-form').addEventListener('submit', (e) => {
+        // Check if user is already logged in
+        function checkIfAlreadyLoggedIn() {
+            const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
+            const loginTimestamp = sessionStorage.getItem('adminLoginTime');
+            const currentTime = new Date().getTime();
+            const sessionTimeout = 30 * 60 * 1000; // 30 minutes
+
+            if (isAuthenticated && loginTimestamp && (currentTime - parseInt(loginTimestamp)) <= sessionTimeout) {
+                // User is already authenticated, redirect to admin
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Check on page load
+        checkIfAlreadyLoggedIn();
+
+        // Load configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch('config.json');
+                return await response.json();
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+                // Fallback to hardcoded values if config fails to load
+                return {
+                    admin: {
+                        username: "admin",
+                        password: "password"
+                    }
+                };
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Hash the password
+            // Load configuration
+            const config = await loadConfig();
+
+            // Hash the entered password
             const hashedPassword = CryptoJS.SHA256(password).toString();
+            
+            // Hash the stored password for comparison
+            const storedPasswordHash = CryptoJS.SHA256(config.admin.password).toString();
 
-            // Store the hash of your desired password here
-            const storedHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // 'password'
-
-            // Compare the hashes
-            if (username === 'admin' && hashedPassword === storedHash) {
+            // Compare credentials
+            if (username === config.admin.username && hashedPassword === storedPasswordHash) {
+                // Set session data for successful login
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                sessionStorage.setItem('adminLoginTime', new Date().getTime().toString());
+                
+                // Redirect to admin panel
                 window.location.href = 'admin.html';
             } else {
                 alert('Invalid credentials');

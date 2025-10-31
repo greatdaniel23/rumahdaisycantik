@@ -81,6 +81,31 @@
         </div>
     </div>
     <script>
+        // Authentication check - must be at the top
+        function checkAuthentication() {
+            const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
+            const loginTimestamp = sessionStorage.getItem('adminLoginTime');
+            const currentTime = new Date().getTime();
+            const sessionTimeout = 30 * 60 * 1000; // 30 minutes
+
+            // Check if user is authenticated and session hasn't expired
+            if (!isAuthenticated || !loginTimestamp || (currentTime - parseInt(loginTimestamp)) > sessionTimeout) {
+                // Clear any existing session data
+                sessionStorage.removeItem('adminAuthenticated');
+                sessionStorage.removeItem('adminLoginTime');
+                // Redirect to login page
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Check authentication immediately when page loads
+        if (!checkAuthentication()) {
+            // Stop script execution if not authenticated
+            throw new Error('Not authenticated');
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const accommodationContainer = document.getElementById('accommodation-container');
             const buttonContainer = document.getElementById('button-container');
@@ -273,7 +298,34 @@
                 saveMessage.className = 'text-sm mt-4 text-green-500';
             });
 
+            // Add logout functionality
+            document.querySelector('a[href="login.html"]').addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+
+            // Auto-logout on session timeout
+            setInterval(() => {
+                if (!checkAuthentication()) {
+                    alert('Session expired. Please login again.');
+                }
+            }, 60000); // Check every minute
+
             fetchContent();
+        });
+
+        // Logout function
+        function logout() {
+            sessionStorage.removeItem('adminAuthenticated');
+            sessionStorage.removeItem('adminLoginTime');
+            window.location.href = 'login.html';
+        }
+
+        // Prevent back button after logout
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                checkAuthentication();
+            }
         });
     </script>
 </body>
