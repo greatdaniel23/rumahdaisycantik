@@ -44,12 +44,19 @@ To use it:
 
 ### Managing Images
 
-The admin panel does not have an image upload feature. To change an image, you must:
+The admin panel now includes a direct image upload feature.
 
-1.  Upload the new image file to your web hosting server (e.g., into an `images/` directory).
-2.  In the admin panel, find the section corresponding to the image you want to change (e.g., an accommodation package or the parallax background).
-3.  Update the "Image Source" or "Background Image URL" field with the correct path to your newly uploaded image (e.g., `/images/new-villa-image.jpg`).
-4.  Save and download the `content.json` file as described above.
+**Prerequisites:**
+*   You must upload the `upload.php` file to the root of your `public_html` directory.
+*   The server must have permissions to create and write to the `/images/uploads/` directory. The `upload.php` script will attempt to create this directory automatically.
+
+**Workflow:**
+
+1.  In the `admin.html` panel, find the image you want to change.
+2.  Click the **"Upload"** button next to the image URL field.
+3.  Select an image file from your local computer.
+4.  The script will automatically upload the image to the `/images/uploads/` directory on your server and the image URL field will be updated with the new path.
+5.  Once you have made all your changes, click **"Save and Download content.json"** and upload the updated file to your server.
 
 ## Updating the Admin Password
 

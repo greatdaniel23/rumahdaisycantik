@@ -10,11 +10,18 @@
     <div class="container mx-auto p-8">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold">Admin Panel</h1>
-            <a href="login.html" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                Logout
+            <a href="login.html" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Back to Login
             </a>
         </div>
 
+        <!-- Image Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Images</h2>
+            <div id="image-container" class="space-y-8">
+                <!-- Image sections will be dynamically added here -->
+            </div>
+        </div>
 
         <!-- Accommodation Management -->
         <div class="mb-12">
@@ -51,7 +58,11 @@
                 </div>
                  <div>
                     <label for="popup-image" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Popup Image URL</label>
-                    <input type="text" id="popup-image" class="w-full border rounded-md p-2">
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="popup-image" class="w-full border rounded-md p-2">
+                        <button class="upload-btn bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600" data-target="popup-image" data-preview="popup-preview">Upload</button>
+                    </div>
+                    <img id="popup-preview" src="" class="max-w-xs rounded-md border mt-4 hidden">
                 </div>
             </div>
         </div>
@@ -62,7 +73,11 @@
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <div>
                     <label for="parallax-bg" class="block text-sm font-medium text-gray-700 mb-1">Background Image URL</label>
-                    <input type="text" id="parallax-bg" class="w-full border rounded-md p-2">
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="parallax-bg" class="w-full border rounded-md p-2">
+                        <button class="upload-btn bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600" data-target="parallax-bg" data-preview="parallax-preview">Upload</button>
+                    </div>
+                    <img id="parallax-preview" src="" class="max-w-xs rounded-md border mt-4 hidden">
                 </div>
             </div>
         </div>
@@ -76,12 +91,13 @@
         </div>
 
         <div class="mt-12 border-t pt-8">
-            <button id="save-all-btn" class="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 text-lg font-semibold">Save and Download content.json</button>
+            <button id="save-all-btn" class="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 text-lg font-semibold">Save All Changes</button>
             <p id="save-message" class="text-sm mt-4"></p>
         </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            const imageContainer = document.getElementById('image-container');
             const accommodationContainer = document.getElementById('accommodation-container');
             const buttonContainer = document.getElementById('button-container');
             const saveAllBtn = document.getElementById('save-all-btn');
@@ -91,15 +107,21 @@
 
             async function fetchContent() {
                 try {
-                    const response = await fetch('content.json');
-                    contentData = await response.json();
-                    renderContent();
+                    const response = await fetch('/api/content');
+                    const result = await response.json();
+                    if (result.success) {
+                        contentData = result.data;
+                        renderContent();
+                    } else {
+                        console.error('Failed to fetch content:', result.error);
+                    }
                 } catch (error) {
                     console.error('Error fetching content:', error);
                 }
             }
 
             function renderContent() {
+                renderImages();
                 renderAccommodations();
                 renderButtons();
                 renderPopup();
@@ -107,6 +129,29 @@
                 renderPages();
             }
 
+            function renderImages() {
+                imageContainer.innerHTML = '';
+                contentData.images.forEach((image, index) => {
+                    const section = document.createElement('div');
+                    section.className = 'bg-white p-6 rounded-lg shadow-md';
+                    section.innerHTML = `
+                        <h3 class="text-xl font-semibold mb-4">${image.id}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <p class="mb-2 font-medium">Current Image:</p>
+                                <img src="${image.src}" alt="${image.alt}" class="max-w-xs rounded-md border">
+                            </div>
+                            <div>
+                                <label for="src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source (URL)</label>
+                                <input type="text" id="src-${index}" value="${image.src}" class="w-full border rounded-md p-2">
+                                <label for="alt-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Alt Text</label>
+                                <input type="text" id="alt-${index}" value="${image.alt}" class="w-full border rounded-md p-2">
+                            </div>
+                        </div>
+                    `;
+                    imageContainer.appendChild(section);
+                });
+            }
 
             function renderAccommodations() {
                 accommodationContainer.innerHTML = '';
@@ -118,8 +163,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label for="pkg-src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source</label>
-                                <input type="text" id="pkg-src-${index}" value="${pkg.imageSrc}" class="w-full border rounded-md p-2 mb-4">
-                                <img src="${pkg.imageSrc}" class="max-w-xs rounded-md border">
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" id="pkg-src-${index}" value="${pkg.imageSrc}" class="w-full border rounded-md p-2">
+                                    <button class="upload-btn bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600" data-target="pkg-src-${index}" data-preview="pkg-preview-${index}">Upload</button>
+                                </div>
+                                <img id="pkg-preview-${index}" src="${pkg.imageSrc}" class="max-w-xs rounded-md border mt-4">
                             </div>
                             <div>
                                 <label for="pkg-alt-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Alt Text</label>
@@ -171,13 +219,29 @@
                     document.getElementById('popup-enabled').checked = contentData.popup.enabled;
                     document.getElementById('popup-title').value = contentData.popup.title;
                     document.getElementById('popup-message').value = contentData.popup.message;
-                    document.getElementById('popup-image').value = contentData.popup.image || '';
+                    const popupImageInput = document.getElementById('popup-image');
+                    const popupPreview = document.getElementById('popup-preview');
+                    popupImageInput.value = contentData.popup.image || '';
+                    if (contentData.popup.image) {
+                        popupPreview.src = contentData.popup.image;
+                        popupPreview.classList.remove('hidden');
+                    } else {
+                        popupPreview.classList.add('hidden');
+                    }
                 }
             }
 
             function renderParallax() {
                 if (contentData.parallax) {
-                    document.getElementById('parallax-bg').value = contentData.parallax.backgroundImage || '';
+                    const bgInput = document.getElementById('parallax-bg');
+                    const bgPreview = document.getElementById('parallax-preview');
+                    bgInput.value = contentData.parallax.backgroundImage || '';
+                    if (contentData.parallax.backgroundImage) {
+                        bgPreview.src = contentData.parallax.backgroundImage;
+                        bgPreview.classList.remove('hidden');
+                    } else {
+                        bgPreview.classList.add('hidden');
+                    }
                 }
             }
 
@@ -203,6 +267,51 @@
                 }
             }
 
+            function handleImageUpload(targetInputId, previewImageId) {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    try {
+                        const response = await fetch('upload.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            const targetInput = document.getElementById(targetInputId);
+                            const previewImage = document.getElementById(previewImageId);
+                            targetInput.value = result.url;
+                            previewImage.src = result.url;
+                            previewImage.classList.remove('hidden');
+                            alert('Image uploaded successfully!');
+                        } else {
+                            alert('Error uploading image: ' + result.message);
+                        }
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        alert('An error occurred while uploading the image.');
+                    }
+                };
+                input.click();
+            }
+
+            document.body.addEventListener('click', (e) => {
+                if (e.target.classList.contains('upload-btn')) {
+                    const targetInputId = e.target.dataset.target;
+                    const previewImageId = e.target.dataset.preview;
+                    handleImageUpload(targetInputId, previewImageId);
+                }
+            });
+
             addAccommodationBtn.addEventListener('click', () => {
                 contentData.accommodations.push({
                     id: `package-${Date.now()}`,
@@ -217,6 +326,12 @@
             });
 
             saveAllBtn.addEventListener('click', async () => {
+                // Save images
+                contentData.images.forEach((image, index) => {
+                    image.src = document.getElementById(`src-${index}`).value;
+                    image.alt = document.getElementById(`alt-${index}`).value;
+                });
+
                 // Save accommodations
                 contentData.accommodations.forEach((pkg, index) => {
                     pkg.imageSrc = document.getElementById(`pkg-src-${index}`).value;
@@ -256,21 +371,27 @@
                     }
                 }
 
-                if (contentData.__v) {
-                  delete contentData.__v;
+                try {
+                    saveMessage.textContent = 'Saving...';
+                    saveMessage.className = 'text-sm mt-4 text-gray-500';
+                    const response = await fetch('/api/content', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(contentData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        saveMessage.textContent = 'Content updated successfully!';
+                        saveMessage.className = 'text-sm mt-4 text-green-500';
+                        fetchContent(); // Re-fetch and re-render
+                    } else {
+                        saveMessage.textContent = `Error: ${result.error}`;
+                        saveMessage.className = 'text-sm mt-4 text-red-500';
+                    }
+                } catch (error) {
+                    saveMessage.textContent = 'An unexpected error occurred.';
+                    saveMessage.className = 'text-sm mt-4 text-red-500';
                 }
-
-                const blob = new Blob([JSON.stringify(contentData, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'content.json';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                saveMessage.textContent = 'content.json has been downloaded!';
-                saveMessage.className = 'text-sm mt-4 text-green-500';
             });
 
             fetchContent();
