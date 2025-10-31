@@ -1,64 +1,90 @@
-# Rumah Daisy Cantik - cPanel Deployment Guide
+# Rumah Daisy Cantik - cPanel Node.js Deployment Guide
 
-## 📁 Files to Upload to cPanel
+This guide provides instructions for deploying the Rumah Daisy Cantik website, which is a Node.js application, to a cPanel hosting environment. Unlike a static website, this application requires a Node.js server to run its backend, which handles content management and authentication.
 
-Upload these files to your `public_html` folder:
+##  Prerequisites
 
-### Essential Files:
-- `index.html` - Main website file
-- `styles.css` - Custom styling
-- `.htaccess` - Server configuration
-- `images/` folder - All your images including logo.png
-- `Google Review/` folder - Review related files
+- A hosting account with cPanel access.
+- The "Setup Node.js App" feature available in your cPanel. If it's not available, your hosting provider may not support Node.js applications.
 
-### 🚫 Do NOT Upload:
-- `node_modules/` folder
-- `package.json` 
-- `package-lock.json`
-- `.gitignore`
-- `deploy/` folder
-- `review.txt`
+## Deployment Steps
 
-## 📋 cPanel Upload Steps:
+### Step 1: Prepare Your Files for Upload
 
-1. **Access File Manager**
-   - Login to your cPanel
-   - Open "File Manager"
-   - Navigate to `public_html` folder
+1.  Run the build script locally to create the `build` directory:
+    ```bash
+    npm run build
+    ```
+2.  Compress the contents of the `build` directory into a single ZIP file (e.g., `rumah-daisy-cantik.zip`).
 
-2. **Upload Files**
-   - Upload `index.html` to the root of `public_html`
-   - Upload `styles.css` to the root of `public_html`
-   - Upload `.htaccess` to the root of `public_html`
-   - Create `images` folder and upload your logo.png
-   - Create `Google Review` folder for reviews
+### Step 2: Set Up the Node.js Application in cPanel
 
-3. **Set Permissions**
-   - Set file permissions to 644 for HTML/CSS files
-   - Set folder permissions to 755 for directories
+1.  **Log in to cPanel** and navigate to the **"Setup Node.js App"** tool in the "Software" section.
+2.  **Create a New Application:**
+    - Click the **"Create Application"** button.
+    - **Node.js version:** Select a version (e.g., 18.x).
+    - **Application mode:** Set to **"Production"**.
+    - **Application root:** This is the directory where your application files will live. For example, `rumahdaisycantik`.
+    - **Application URL:** This will be the public URL of your website (e.g., `yourdomain.com`).
+    - **Application startup file:** Set this to `server.js`.
+    - Click **"Create"**.
 
-## 🌐 Domain Setup:
+### Step 3: Upload Your Application Files
 
-- Your website will be accessible at: `yourdomain.com`
-- Make sure your domain is pointed to your hosting provider
-- SSL certificate recommended for HTTPS
+1.  Go to the cPanel **"File Manager"** and navigate to the application root directory you specified in the previous step (e.g., `rumahdaisycantik`).
+2.  **Upload** the ZIP file you created in Step 1.
+3.  **Extract** the contents of the ZIP file into the application root directory.
 
-## ✅ Post-Upload Checklist:
+### Step 4: Install Dependencies
 
-- [ ] Test website loads correctly
-- [ ] Check all images display properly
-- [ ] Verify mobile responsiveness
-- [ ] Test all navigation links
-- [ ] Confirm YouTube video plays
-- [ ] Check Google Maps embed works
+1.  Go back to the **"Setup Node.js App"** tool in cPanel.
+2.  Find your application in the list and click **"Run NPM Install"**. This will install the dependencies listed in your `package.json` file.
 
-## 🔧 Common Issues:
+### Step 5: Configure Environment Variables
 
-1. **Images not loading**: Check file paths and case sensitivity
-2. **YouTube not working**: Ensure iframe is allowed
-3. **CSS not loading**: Verify file path in HTML
-4. **404 errors**: Check .htaccess file syntax
+1.  In the "Setup Node.js App" tool, find the **"Environment Variables"** section for your application.
+2.  Add the following variables:
+    - `ADMIN_USERNAME`: Set this to your desired admin username.
+    - `ADMIN_PASSWORD`: Set this to a strong, secure password.
+    - `GOOGLE_API_KEY`: Add your Google API key here.
 
-## 📞 Support:
+### Step 6: Start the Application
 
-If you need help with deployment, contact your hosting provider's support team.
+1.  In the "Setup Node.js App" tool, click the **"Start App"** button for your application.
+
+### Step 7: Configure `.htaccess` for Public Access
+
+To ensure that visitors can access your application through your domain, you need to add a `.htaccess` file to your `public_html` directory.
+
+1.  In the cPanel **"File Manager"**, navigate to the `public_html` directory.
+2.  Create a new file named `.htaccess` (if it doesn't already exist).
+3.  Add the following lines to the `.htaccess` file, replacing `yourdomain.com` with your actual domain and `rumahdaisycantik` with your application's root directory:
+
+```apache
+#
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION.
+#
+PassengerAppRoot "/home/your_cpanel_username/rumahdaisycantik"
+PassengerBaseURI "/"
+PassengerNodejs "/home/your_cpanel_username/nodevenv/rumahdaisycantik/18/bin/node"
+PassengerAppType node
+PassengerStartupFile server.js
+#
+# DO NOT REMOVE. END OF CLOUDLINUX PASSENGER CONFIGURATION.
+#
+```
+
+**Note:** The exact contents of the `.htaccess` file may be automatically generated by cPanel when you create the Node.js application. If so, you may not need to create or edit this file manually.
+
+## ✅ Post-Deployment Checklist
+
+- [ ] Test that your website loads correctly at your domain.
+- [ ] Try to access the `/admin.html` page directly. You should be redirected to `/login.html`.
+- [ ] Log in to the admin panel with the credentials you set in the environment variables.
+- [ ] Verify that all images and content are loading correctly.
+
+## 🔧 Common Issues
+
+- **503 Error:** This usually means the Node.js application failed to start. Check the application logs in the "Setup Node.js App" tool for errors.
+- **Application Not Found:** This is often an issue with the `.htaccess` file. Double-check the paths and configuration.
+- **Authentication Not Working:** Ensure that you have set the `ADMIN_USERNAME` and `ADMIN_PASSWORD` environment variables correctly.
