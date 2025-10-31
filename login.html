@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
     <div class="w-full max-w-xs">
@@ -31,21 +32,20 @@
     </div>
 
     <script>
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
+        document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            });
+            // Hash the password
+            const hashedPassword = CryptoJS.SHA256(password).toString();
 
-            if (response.ok) {
-                window.location.href = '/admin.html';
+            // Store the hash of your desired password here
+            const storedHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // 'password'
+
+            // Compare the hashes
+            if (username === 'admin' && hashedPassword === storedHash) {
+                window.location.href = 'admin.html';
             } else {
                 alert('Invalid credentials');
             }
