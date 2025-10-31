@@ -95,23 +95,25 @@
         </div>
 
         <div class="mt-12 border-t pt-8">
-            <button id="save-all-btn" class="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 text-lg font-semibold">Save and Download content.json</button>
+            <button id="save-all-btn" class="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 text-lg font-semibold">Save Global Settings</button>
             <p id="save-message" class="text-sm mt-4"></p>
+            <p class="text-xs text-gray-500 mt-2">Note: Individual items are saved automatically when you click their respective "Save Changes" buttons.</p>
         </div>
     </div>
+    <!-- Load Database API Client -->
+    <script src="database-api.js"></script>
+    
     <script>
         // Authentication check - must be at the top
         function checkAuthentication() {
-            const isAuthenticated = sessionStorage.getItem('adminAuthenticated');
-            const loginTimestamp = sessionStorage.getItem('adminLoginTime');
+            const authData = JSON.parse(sessionStorage.getItem('adminAuth') || '{}');
             const currentTime = new Date().getTime();
             const sessionTimeout = 30 * 60 * 1000; // 30 minutes
 
             // Check if user is authenticated and session hasn't expired
-            if (!isAuthenticated || !loginTimestamp || (currentTime - parseInt(loginTimestamp)) > sessionTimeout) {
+            if (!authData.authenticated || !authData.timestamp || (currentTime - authData.timestamp) > sessionTimeout) {
                 // Clear any existing session data
-                sessionStorage.removeItem('adminAuthenticated');
-                sessionStorage.removeItem('adminLoginTime');
+                sessionStorage.removeItem('adminAuth');
                 // Redirect to login page
                 window.location.href = 'login.html';
                 return false;
@@ -133,134 +135,388 @@
             const addAccommodationBtn = document.getElementById('add-accommodation-btn');
             const addImageBtn = document.getElementById('add-image-btn');
             const saveMessage = document.getElementById('save-message');
-            let contentData = null;
 
-            async function fetchContent() {
+            // Test database connection on load
+            try {
+                loading.show('Connecting to database...');
+                const healthCheck = await dbAPI.testConnection();
+                if (healthCheck.success) {
+                    notify.success('Database connected successfully');
+                    await loadAllContent();
+                } else {
+                    notify.error('Database connection failed');
+                }
+            } catch (error) {
+                console.error('Database connection error:', error);
+                notify.error('Failed to connect to database: ' + error.message);
+            } finally {
+                loading.hide();
+            }
+
+            async function loadAllContent() {
                 try {
-                    const response = await fetch('content.json');
-                    contentData = await response.json();
-                    renderContent();
+                    loading.show('Loading content...');
+                    await Promise.all([
+                        renderImages(),
+                        renderAccommodations(),
+                        renderButtons(),
+                        renderPopup(),
+                        renderParallax(),
+                        renderPages()
+                    ]);
+                    notify.success('Content loaded successfully');
                 } catch (error) {
-                    console.error('Error fetching content:', error);
+                    console.error('Error loading content:', error);
+                    notify.error('Failed to load content: ' + error.message);
+                } finally {
+                    loading.hide();
                 }
             }
 
-            function renderContent() {
-                renderImages();
-                renderAccommodations();
-                renderButtons();
-                renderPopup();
-                renderParallax();
-                renderPages();
+
+            async function renderImages() {
+                try {
+                    const response = await dbAPI.getImages();
+                    const images = response.data || [];
+
+                    imagesContainer.innerHTML = '';
+                    if (images.length > 0) {
+                        images.forEach((img) => {
+                            const section = document.createElement('div');
+                            section.className = 'bg-white p-6 rounded-lg shadow-md relative';
+                            section.innerHTML = `
+                                <h3 class="text-xl font-semibold mb-4">Image: ${img.alt || `Image ${img.id}`}</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                        <label for="img-src-${img.id}" class="block text-sm font-medium text-gray-700 mb-1">Image Source URL</label>
+                                        <input type="text" id="img-src-${img.id}" value="${img.src}" class="w-full border rounded-md p-2 mb-4">
+                                        <img src="${img.src}" class="max-w-xs rounded-md border" onerror="this.src='https://placehold.co/300x200/E0E0E0/666?text=Image+Not+Found'">
+                                    </div>
+                                    <div>
+                                        <label for="img-type-${img.id}" class="block text-sm font-medium text-gray-700 mb-1">Image Type</label>
+                                        <select id="img-type-${img.id}" class="w-full border rounded-md p-2 mb-4">
+                                            <option value="hero" ${img.type === 'hero' ? 'selected' : ''}>Hero</option>
+                                            <option value="gallery" ${img.type === 'gallery' ? 'selected' : ''}>Gallery</option>
+                                            <option value="thumbnail" ${img.type === 'thumbnail' ? 'selected' : ''}>Thumbnail</option>
+                                            <option value="parallax" ${img.type === 'parallax' ? 'selected' : ''}>Parallax</option>
+                                            <option value="popup" ${img.type === 'popup' ? 'selected' : ''}>Popup</option>
+                                        </select>
+                                        <label for="img-category-${img.id}" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                        <input type="text" id="img-category-${img.id}" value="${img.category || ''}" class="w-full border rounded-md p-2 mb-4">
+                                        <label for="img-alt-${img.id}" class="block text-sm font-medium text-gray-700 mb-1">Alt Text</label>
+                                        <input type="text" id="img-alt-${img.id}" value="${img.alt || ''}" class="w-full border rounded-md p-2 mb-4">
+                                        <label for="img-description-${img.id}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                        <textarea id="img-description-${img.id}" class="w-full border rounded-md p-2 h-20">${img.description || ''}</textarea>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex gap-2">
+                                    <button class="save-image-btn bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" data-id="${img.id}">Save Changes</button>
+                                    <button class="delete-image-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" data-id="${img.id}">Delete</button>
+                                </div>
+                            `;
+                            imagesContainer.appendChild(section);
+                        });
+
+                        // Add save event listeners
+                        document.querySelectorAll('.save-image-btn').forEach(button => {
+                            button.addEventListener('click', async (e) => {
+                                const imageId = e.target.dataset.id;
+                                try {
+                                    loading.show('Saving image...');
+                                    const imageData = {
+                                        src: document.getElementById(`img-src-${imageId}`).value,
+                                        alt: document.getElementById(`img-alt-${imageId}`).value,
+                                        type: document.getElementById(`img-type-${imageId}`).value,
+                                        category: document.getElementById(`img-category-${imageId}`).value,
+                                        description: document.getElementById(`img-description-${imageId}`).value
+                                    };
+                                    
+                                    await dbAPI.updateImage(imageId, imageData);
+                                    notify.success('Image updated successfully');
+                                } catch (error) {
+                                    console.error('Error saving image:', error);
+                                    notify.error('Failed to save image: ' + error.message);
+                                } finally {
+                                    loading.hide();
+                                }
+                            });
+                        });
+
+                        // Add delete event listeners
+                        document.querySelectorAll('.delete-image-btn').forEach(button => {
+                            button.addEventListener('click', async (e) => {
+                                const imageId = e.target.dataset.id;
+                                if (confirm('Are you sure you want to delete this image?')) {
+                                    try {
+                                        loading.show('Deleting image...');
+                                        await dbAPI.deleteImage(imageId);
+                                        notify.success('Image deleted successfully');
+                                        await renderImages();
+                                    } catch (error) {
+                                        console.error('Error deleting image:', error);
+                                        notify.error('Failed to delete image: ' + error.message);
+                                    } finally {
+                                        loading.hide();
+                                    }
+                                }
+                            });
+                        });
+                    } else {
+                        imagesContainer.innerHTML = '<p class="text-gray-500 italic">No images found. Click "Add New Image" to create one.</p>';
+                    }
+                } catch (error) {
+                    console.error('Error loading images:', error);
+                    imagesContainer.innerHTML = '<p class="text-red-500">Error loading images. Please try again.</p>';
+                }
             }
 
+            async function renderAccommodations() {
+                try {
+                    const response = await dbAPI.getAccommodations();
+                    const accommodations = response.data || [];
 
-            function renderImages() {
-                imagesContainer.innerHTML = '';
-                if (contentData.images && contentData.images.length > 0) {
-                    contentData.images.forEach((img, index) => {
+                    accommodationContainer.innerHTML = '';
+                    accommodations.forEach((accommodation) => {
                         const section = document.createElement('div');
                         section.className = 'bg-white p-6 rounded-lg shadow-md relative';
                         section.innerHTML = `
-                            <h3 class="text-xl font-semibold mb-4">Image: ${img.id || `Image ${index + 1}`}</h3>
+                            <h3 class="text-xl font-semibold mb-4">${accommodation.name}</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
-                                    <label for="img-src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source URL</label>
-                                    <input type="text" id="img-src-${index}" value="${img.src}" class="w-full border rounded-md p-2 mb-4">
-                                    <img src="${img.src}" class="max-w-xs rounded-md border" onerror="this.src='https://placehold.co/300x200/E0E0E0/666?text=Image+Not+Found'">
+                                    <label for="acc-image-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                                    <input type="text" id="acc-image-${accommodation.id}" value="${accommodation.image_url || ''}" class="w-full border rounded-md p-2 mb-4">
+                                    ${accommodation.image_url ? `<img src="${accommodation.image_url}" class="max-w-xs rounded-md border" onerror="this.src='https://placehold.co/300x200/E0E0E0/666?text=Image+Not+Found'">` : ''}
                                 </div>
                                 <div>
-                                    <label for="img-id-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image ID</label>
-                                    <input type="text" id="img-id-${index}" value="${img.id || ''}" class="w-full border rounded-md p-2 mb-4">
-                                    <label for="img-alt-${index}" class="block text-sm font-medium text-gray-700 mb-1">Alt Text</label>
-                                    <input type="text" id="img-alt-${index}" value="${img.alt || ''}" class="w-full border rounded-md p-2">
+                                    <label for="acc-name-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                    <input type="text" id="acc-name-${accommodation.id}" value="${accommodation.name}" class="w-full border rounded-md p-2 mb-4">
+                                    
+                                    <label for="acc-type-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                                    <select id="acc-type-${accommodation.id}" class="w-full border rounded-md p-2 mb-4">
+                                        <option value="villa" ${accommodation.type === 'villa' ? 'selected' : ''}>Villa</option>
+                                        <option value="room" ${accommodation.type === 'room' ? 'selected' : ''}>Room</option>
+                                        <option value="suite" ${accommodation.type === 'suite' ? 'selected' : ''}>Suite</option>
+                                    </select>
+                                    
+                                    <div class="grid grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <label for="acc-guests-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+                                            <input type="number" id="acc-guests-${accommodation.id}" value="${accommodation.max_guests || ''}" class="w-full border rounded-md p-2">
+                                        </div>
+                                        <div>
+                                            <label for="acc-bedrooms-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Bedrooms</label>
+                                            <input type="number" id="acc-bedrooms-${accommodation.id}" value="${accommodation.bedrooms || ''}" class="w-full border rounded-md p-2">
+                                        </div>
+                                        <div>
+                                            <label for="acc-bathrooms-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Bathrooms</label>
+                                            <input type="number" id="acc-bathrooms-${accommodation.id}" value="${accommodation.bathrooms || ''}" class="w-full border rounded-md p-2">
+                                        </div>
+                                    </div>
+                                    
+                                    <label for="acc-price-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Price per Night</label>
+                                    <input type="number" id="acc-price-${accommodation.id}" value="${accommodation.price_per_night || ''}" class="w-full border rounded-md p-2 mb-4" step="0.01">
+                                    
+                                    <label for="acc-desc-${accommodation.id}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                    <textarea id="acc-desc-${accommodation.id}" class="w-full border rounded-md p-2 h-24">${accommodation.description || ''}</textarea>
+                                    
+                                    <label for="acc-amenities-${accommodation.id}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Amenities (comma-separated)</label>
+                                    <input type="text" id="acc-amenities-${accommodation.id}" value="${accommodation.amenities ? accommodation.amenities.join(', ') : ''}" class="w-full border rounded-md p-2">
+                                    
+                                    <div class="mt-4">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" id="acc-active-${accommodation.id}" ${accommodation.is_active ? 'checked' : ''} class="mr-2">
+                                            <span class="text-sm text-gray-700">Active</span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                            <button class="delete-image-btn absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" data-index="${index}">&times; Delete</button>
+                            <div class="mt-4 flex gap-2">
+                                <button class="save-accommodation-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600" data-id="${accommodation.id}">Save Changes</button>
+                                <button class="delete-accommodation-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" data-id="${accommodation.id}">Delete</button>
+                            </div>
                         `;
-                        imagesContainer.appendChild(section);
+                        accommodationContainer.appendChild(section);
+                    });
+
+                    // Add save event listeners
+                    document.querySelectorAll('.save-accommodation-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const accommodationId = e.target.dataset.id;
+                            try {
+                                loading.show('Saving accommodation...');
+                                const amenitiesText = document.getElementById(`acc-amenities-${accommodationId}`).value;
+                                const amenities = amenitiesText ? amenitiesText.split(',').map(a => a.trim()).filter(a => a) : [];
+                                
+                                const accommodationData = {
+                                    name: document.getElementById(`acc-name-${accommodationId}`).value,
+                                    description: document.getElementById(`acc-desc-${accommodationId}`).value,
+                                    type: document.getElementById(`acc-type-${accommodationId}`).value,
+                                    max_guests: parseInt(document.getElementById(`acc-guests-${accommodationId}`).value) || null,
+                                    bedrooms: parseInt(document.getElementById(`acc-bedrooms-${accommodationId}`).value) || null,
+                                    bathrooms: parseInt(document.getElementById(`acc-bathrooms-${accommodationId}`).value) || null,
+                                    price_per_night: parseFloat(document.getElementById(`acc-price-${accommodationId}`).value) || null,
+                                    image_url: document.getElementById(`acc-image-${accommodationId}`).value,
+                                    amenities: amenities,
+                                    is_active: document.getElementById(`acc-active-${accommodationId}`).checked
+                                };
+                                
+                                await dbAPI.updateAccommodation(accommodationId, accommodationData);
+                                notify.success('Accommodation updated successfully');
+                            } catch (error) {
+                                console.error('Error saving accommodation:', error);
+                                notify.error('Failed to save accommodation: ' + error.message);
+                            } finally {
+                                loading.hide();
+                            }
+                        });
                     });
 
                     // Add delete event listeners
-                    document.querySelectorAll('.delete-image-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const indexToDelete = parseInt(e.target.dataset.index, 10);
-                            contentData.images.splice(indexToDelete, 1);
-                            renderImages();
+                    document.querySelectorAll('.delete-accommodation-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const accommodationId = e.target.dataset.id;
+                            if (confirm('Are you sure you want to delete this accommodation?')) {
+                                try {
+                                    loading.show('Deleting accommodation...');
+                                    await dbAPI.deleteAccommodation(accommodationId);
+                                    notify.success('Accommodation deleted successfully');
+                                    await renderAccommodations();
+                                } catch (error) {
+                                    console.error('Error deleting accommodation:', error);
+                                    notify.error('Failed to delete accommodation: ' + error.message);
+                                } finally {
+                                    loading.hide();
+                                }
+                            }
                         });
                     });
-                } else {
-                    imagesContainer.innerHTML = '<p class="text-gray-500 italic">No general images found. Click "Add New Image" to create one.</p>';
+                } catch (error) {
+                    console.error('Error loading accommodations:', error);
+                    accommodationContainer.innerHTML = '<p class="text-red-500">Error loading accommodations. Please try again.</p>';
                 }
             }
 
-            function renderAccommodations() {
-                accommodationContainer.innerHTML = '';
-                contentData.accommodations.forEach((pkg, index) => {
-                    const section = document.createElement('div');
-                    section.className = 'bg-white p-6 rounded-lg shadow-md relative';
-                    section.innerHTML = `
-                        <h3 class="text-xl font-semibold mb-4">Package ${index + 1}</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <label for="pkg-src-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Source</label>
-                                <input type="text" id="pkg-src-${index}" value="${pkg.imageSrc}" class="w-full border rounded-md p-2 mb-4">
-                                <img src="${pkg.imageSrc}" class="max-w-xs rounded-md border">
-                            </div>
-                            <div>
-                                <label for="pkg-alt-${index}" class="block text-sm font-medium text-gray-700 mb-1">Image Alt Text</label>
-                                <input type="text" id="pkg-alt-${index}" value="${pkg.imageAlt}" class="w-full border rounded-md p-2 mb-4">
-                                <label for="pkg-title-${index}" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                                <input type="text" id="pkg-title-${index}" value="${pkg.title}" class="w-full border rounded-md p-2 mb-4">
-                                <label for="pkg-desc-${index}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                <textarea id="pkg-desc-${index}" class="w-full border rounded-md p-2 h-24">${pkg.description}</textarea>
-                                <label for="pkg-btn-text-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Text</label>
-                                <input type="text" id="pkg-btn-text-${index}" value="${pkg.buttonText || ''}" class="w-full border rounded-md p-2">
-                                <label for="pkg-btn-link-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Link</label>
-                                <input type="text" id="pkg-btn-link-${index}" value="${pkg.buttonLink || ''}" class="w-full border rounded-md p-2">
-                            </div>
-                        </div>
-                        <button class="delete-accommodation-btn absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600" data-index="${index}">&times; Delete</button>
-                    `;
-                    accommodationContainer.appendChild(section);
-                });
+            async function renderButtons() {
+                try {
+                    const response = await dbAPI.getButtons();
+                    const buttons = response.data || [];
 
-                document.querySelectorAll('.delete-accommodation-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const indexToDelete = parseInt(e.target.dataset.index, 10);
-                        contentData.accommodations.splice(indexToDelete, 1);
-                        renderAccommodations();
+                    buttonContainer.innerHTML = '';
+                    buttons.forEach((button) => {
+                        const section = document.createElement('div');
+                        section.className = 'bg-white p-6 rounded-lg shadow-md';
+                        section.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-4">${button.text}</h3>
+                            <div>
+                                <label for="btn-text-${button.id}" class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+                                <input type="text" id="btn-text-${button.id}" value="${button.text}" class="w-full border rounded-md p-2 mb-4">
+                                
+                                <label for="btn-url-${button.id}" class="block text-sm font-medium text-gray-700 mb-1">Button URL</label>
+                                <input type="text" id="btn-url-${button.id}" value="${button.url || ''}" class="w-full border rounded-md p-2 mb-4">
+                                
+                                <label for="btn-style-${button.id}" class="block text-sm font-medium text-gray-700 mb-1">Button Style</label>
+                                <select id="btn-style-${button.id}" class="w-full border rounded-md p-2 mb-4">
+                                    <option value="primary" ${button.style === 'primary' ? 'selected' : ''}>Primary</option>
+                                    <option value="secondary" ${button.style === 'secondary' ? 'selected' : ''}>Secondary</option>
+                                    <option value="outline" ${button.style === 'outline' ? 'selected' : ''}>Outline</option>
+                                </select>
+                                
+                                <label for="btn-icon-${button.id}" class="block text-sm font-medium text-gray-700 mb-1">Icon (FontAwesome class)</label>
+                                <input type="text" id="btn-icon-${button.id}" value="${button.icon || ''}" class="w-full border rounded-md p-2 mb-4" placeholder="fas fa-home">
+                                
+                                <label for="btn-target-${button.id}" class="block text-sm font-medium text-gray-700 mb-1">Target</label>
+                                <select id="btn-target-${button.id}" class="w-full border rounded-md p-2 mb-4">
+                                    <option value="_self" ${button.target === '_self' ? 'selected' : ''}>Same Window</option>
+                                    <option value="_blank" ${button.target === '_blank' ? 'selected' : ''}>New Window</option>
+                                </select>
+                                
+                                <div class="mt-4">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="btn-active-${button.id}" ${button.is_active ? 'checked' : ''} class="mr-2">
+                                        <span class="text-sm text-gray-700">Active</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="mt-4 flex gap-2">
+                                    <button class="save-button-btn bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" data-id="${button.id}">Save Changes</button>
+                                    <button class="delete-button-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" data-id="${button.id}">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                        buttonContainer.appendChild(section);
                     });
-                });
+
+                    // Add save event listeners
+                    document.querySelectorAll('.save-button-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const buttonId = e.target.dataset.id;
+                            try {
+                                loading.show('Saving button...');
+                                const buttonData = {
+                                    text: document.getElementById(`btn-text-${buttonId}`).value,
+                                    url: document.getElementById(`btn-url-${buttonId}`).value,
+                                    style: document.getElementById(`btn-style-${buttonId}`).value,
+                                    icon: document.getElementById(`btn-icon-${buttonId}`).value,
+                                    target: document.getElementById(`btn-target-${buttonId}`).value,
+                                    is_active: document.getElementById(`btn-active-${buttonId}`).checked
+                                };
+                                
+                                await dbAPI.updateButton(buttonId, buttonData);
+                                notify.success('Button updated successfully');
+                            } catch (error) {
+                                console.error('Error saving button:', error);
+                                notify.error('Failed to save button: ' + error.message);
+                            } finally {
+                                loading.hide();
+                            }
+                        });
+                    });
+
+                    // Add delete event listeners
+                    document.querySelectorAll('.delete-button-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const buttonId = e.target.dataset.id;
+                            if (confirm('Are you sure you want to delete this button?')) {
+                                try {
+                                    loading.show('Deleting button...');
+                                    await dbAPI.deleteButton(buttonId);
+                                    notify.success('Button deleted successfully');
+                                    await renderButtons();
+                                } catch (error) {
+                                    console.error('Error deleting button:', error);
+                                    notify.error('Failed to delete button: ' + error.message);
+                                } finally {
+                                    loading.hide();
+                                }
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error loading buttons:', error);
+                    buttonContainer.innerHTML = '<p class="text-red-500">Error loading buttons. Please try again.</p>';
+                }
             }
 
-            function renderButtons() {
-                buttonContainer.innerHTML = '';
-                contentData.buttons.forEach((button, index) => {
-                    const section = document.createElement('div');
-                    section.className = 'bg-white p-6 rounded-lg shadow-md';
-                    section.innerHTML = `
-                        <h3 class="text-xl font-semibold mb-4">${button.id}</h3>
-                        <div>
-                            <label for="btn-text-${index}" class="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
-                            <input type="text" id="btn-text-${index}" value="${button.text}" class="w-full border rounded-md p-2">
-                            <label for="btn-link-${index}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Button Link (URL)</label>
-                            <input type="text" id="btn-link-${index}" value="${button.link || ''}" class="w-full border rounded-md p-2">
-                        </div>
-                    `;
-                    buttonContainer.appendChild(section);
-                });
-            }
-
-            function renderPopup() {
-                if (contentData.popup) {
-                    document.getElementById('popup-enabled').checked = contentData.popup.enabled;
-                    document.getElementById('popup-title').value = contentData.popup.title;
-                    document.getElementById('popup-message').value = contentData.popup.message;
-                    document.getElementById('popup-image').value = contentData.popup.image || '';
-                    document.getElementById('popup-button-text').value = contentData.popup.buttonText || '';
-                    document.getElementById('popup-button-link').value = contentData.popup.buttonLink || '';
-                    updatePopupImagePreview();
+            async function renderPopup() {
+                try {
+                    const response = await dbAPI.getPopupItems();
+                    const popupItems = response.data || [];
+                    
+                    // For now, just handle the first popup item
+                    const popup = popupItems[0];
+                    if (popup) {
+                        document.getElementById('popup-title').value = popup.title || '';
+                        document.getElementById('popup-message').value = popup.description || '';
+                        document.getElementById('popup-image').value = popup.image_url || '';
+                        document.getElementById('popup-button-text').value = popup.button_text || '';
+                        document.getElementById('popup-button-link').value = popup.button_url || '';
+                        updatePopupImagePreview();
+                        
+                        // Store popup ID for saving
+                        document.getElementById('popup-title').dataset.popupId = popup.id;
+                    }
+                } catch (error) {
+                    console.error('Error loading popup:', error);
                 }
             }
 
@@ -274,10 +530,22 @@
                 }
             }
 
-            function renderParallax() {
-                if (contentData.parallax) {
-                    document.getElementById('parallax-bg').value = contentData.parallax.backgroundImage || '';
-                    updateParallaxImagePreview();
+            async function renderParallax() {
+                try {
+                    const response = await dbAPI.getParallaxItems();
+                    const parallaxItems = response.data || [];
+                    
+                    // For now, just handle the first parallax item
+                    const parallax = parallaxItems[0];
+                    if (parallax) {
+                        document.getElementById('parallax-bg').value = parallax.image_url || '';
+                        updateParallaxImagePreview();
+                        
+                        // Store parallax ID for saving
+                        document.getElementById('parallax-bg').dataset.parallaxId = parallax.id;
+                    }
+                } catch (error) {
+                    console.error('Error loading parallax:', error);
                 }
             }
 
@@ -291,119 +559,201 @@
                 }
             }
 
-            function renderPages() {
-                const pageContainer = document.getElementById('page-container');
-                pageContainer.innerHTML = '';
-                if (contentData.pages) {
-                    for (const pageId in contentData.pages) {
-                        const page = contentData.pages[pageId];
+            async function renderPages() {
+                try {
+                    const response = await dbAPI.getPages();
+                    const pages = response.data || [];
+
+                    const pageContainer = document.getElementById('page-container');
+                    pageContainer.innerHTML = '';
+                    
+                    pages.forEach((page) => {
                         const section = document.createElement('div');
                         section.className = 'bg-white p-6 rounded-lg shadow-md';
                         section.innerHTML = `
                             <h3 class="text-xl font-semibold mb-4">${page.title}</h3>
                             <div>
-                                <label for="page-title-${pageId}" class="block text-sm font-medium text-gray-700 mb-1">Page Title</label>
-                                <input type="text" id="page-title-${pageId}" value="${page.title}" class="w-full border rounded-md p-2">
-                                <label for="page-content-${pageId}" class="block text-sm font-medium text-gray-700 mt-4 mb-1">Page Content (HTML)</label>
-                                <textarea id="page-content-${pageId}" class="w-full border rounded-md p-2 h-48">${page.content}</textarea>
+                                <label for="page-name-${page.id}" class="block text-sm font-medium text-gray-700 mb-1">Page Name</label>
+                                <input type="text" id="page-name-${page.id}" value="${page.page_name}" class="w-full border rounded-md p-2 mb-4">
+                                
+                                <label for="page-title-${page.id}" class="block text-sm font-medium text-gray-700 mb-1">Page Title</label>
+                                <input type="text" id="page-title-${page.id}" value="${page.title}" class="w-full border rounded-md p-2 mb-4">
+                                
+                                <label for="page-desc-${page.id}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea id="page-desc-${page.id}" class="w-full border rounded-md p-2 h-24 mb-4">${page.description || ''}</textarea>
+                                
+                                <label for="page-meta-${page.id}" class="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+                                <textarea id="page-meta-${page.id}" class="w-full border rounded-md p-2 h-20 mb-4">${page.meta_description || ''}</textarea>
+                                
+                                <label for="page-keywords-${page.id}" class="block text-sm font-medium text-gray-700 mb-1">Keywords (comma-separated)</label>
+                                <input type="text" id="page-keywords-${page.id}" value="${page.keywords ? page.keywords.join(', ') : ''}" class="w-full border rounded-md p-2 mb-4">
+                                
+                                <div class="mt-4">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="page-active-${page.id}" ${page.is_active ? 'checked' : ''} class="mr-2">
+                                        <span class="text-sm text-gray-700">Active</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="mt-4 flex gap-2">
+                                    <button class="save-page-btn bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600" data-id="${page.id}">Save Changes</button>
+                                    <button class="delete-page-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" data-id="${page.id}">Delete</button>
+                                </div>
                             </div>
                         `;
                         pageContainer.appendChild(section);
-                    }
+                    });
+
+                    // Add save event listeners
+                    document.querySelectorAll('.save-page-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const pageId = e.target.dataset.id;
+                            try {
+                                loading.show('Saving page...');
+                                const keywordsText = document.getElementById(`page-keywords-${pageId}`).value;
+                                const keywords = keywordsText ? keywordsText.split(',').map(k => k.trim()).filter(k => k) : [];
+                                
+                                const pageData = {
+                                    page_name: document.getElementById(`page-name-${pageId}`).value,
+                                    title: document.getElementById(`page-title-${pageId}`).value,
+                                    description: document.getElementById(`page-desc-${pageId}`).value,
+                                    meta_description: document.getElementById(`page-meta-${pageId}`).value,
+                                    keywords: keywords,
+                                    is_active: document.getElementById(`page-active-${pageId}`).checked
+                                };
+                                
+                                await dbAPI.updatePage(pageId, pageData);
+                                notify.success('Page updated successfully');
+                            } catch (error) {
+                                console.error('Error saving page:', error);
+                                notify.error('Failed to save page: ' + error.message);
+                            } finally {
+                                loading.hide();
+                            }
+                        });
+                    });
+
+                    // Add delete event listeners
+                    document.querySelectorAll('.delete-page-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const pageId = e.target.dataset.id;
+                            if (confirm('Are you sure you want to delete this page?')) {
+                                try {
+                                    loading.show('Deleting page...');
+                                    await dbAPI.deletePage(pageId);
+                                    notify.success('Page deleted successfully');
+                                    await renderPages();
+                                } catch (error) {
+                                    console.error('Error deleting page:', error);
+                                    notify.error('Failed to delete page: ' + error.message);
+                                } finally {
+                                    loading.hide();
+                                }
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error loading pages:', error);
+                    document.getElementById('page-container').innerHTML = '<p class="text-red-500">Error loading pages. Please try again.</p>';
                 }
             }
 
-            addImageBtn.addEventListener('click', () => {
-                if (!contentData.images) {
-                    contentData.images = [];
+            addImageBtn.addEventListener('click', async () => {
+                try {
+                    loading.show('Creating new image...');
+                    const newImageData = {
+                        src: "https://placehold.co/400x300/FFFFFF/E0E0E0?text=New+Image",
+                        alt: "New Image",
+                        type: "gallery",
+                        category: "general"
+                    };
+                    
+                    await dbAPI.createImage(newImageData);
+                    notify.success('New image created successfully');
+                    await renderImages();
+                } catch (error) {
+                    console.error('Error creating image:', error);
+                    notify.error('Failed to create image: ' + error.message);
+                } finally {
+                    loading.hide();
                 }
-                contentData.images.push({
-                    id: `image-${Date.now()}`,
-                    src: "https://placehold.co/400x300/FFFFFF/E0E0E0?text=New+Image",
-                    alt: "New Image"
-                });
-                renderImages();
             });
 
-            addAccommodationBtn.addEventListener('click', () => {
-                contentData.accommodations.push({
-                    id: `package-${Date.now()}`,
-                    imageSrc: "https://placehold.co/600x400/FFFFFF/E0E0E0?text=New+Image",
-                    imageAlt: "New Accommodation",
-                    title: "New Package Title",
-                    description: "A description for the new package.",
-                    buttonText: "View Details",
-                    buttonLink: "#"
-                });
-                renderAccommodations();
+            addAccommodationBtn.addEventListener('click', async () => {
+                try {
+                    loading.show('Creating new accommodation...');
+                    const newAccommodationData = {
+                        name: "New Accommodation",
+                        description: "A description for the new accommodation.",
+                        type: "villa",
+                        max_guests: 2,
+                        bedrooms: 1,
+                        bathrooms: 1,
+                        price_per_night: 100.00,
+                        image_url: "https://placehold.co/600x400/FFFFFF/E0E0E0?text=New+Accommodation",
+                        amenities: ["WiFi", "Air Conditioning"],
+                        is_active: true
+                    };
+                    
+                    await dbAPI.createAccommodation(newAccommodationData);
+                    notify.success('New accommodation created successfully');
+                    await renderAccommodations();
+                } catch (error) {
+                    console.error('Error creating accommodation:', error);
+                    notify.error('Failed to create accommodation: ' + error.message);
+                } finally {
+                    loading.hide();
+                }
             });
 
             saveAllBtn.addEventListener('click', async () => {
-                // Save general images
-                if (contentData.images) {
-                    contentData.images.forEach((img, index) => {
-                        img.src = document.getElementById(`img-src-${index}`).value;
-                        img.id = document.getElementById(`img-id-${index}`).value;
-                        img.alt = document.getElementById(`img-alt-${index}`).value;
-                    });
-                }
-
-                // Save accommodations
-                contentData.accommodations.forEach((pkg, index) => {
-                    pkg.imageSrc = document.getElementById(`pkg-src-${index}`).value;
-                    pkg.imageAlt = document.getElementById(`pkg-alt-${index}`).value;
-                    pkg.title = document.getElementById(`pkg-title-${index}`).value;
-                    pkg.description = document.getElementById(`pkg-desc-${index}`).value;
-                    pkg.buttonText = document.getElementById(`pkg-btn-text-${index}`).value;
-                    pkg.buttonLink = document.getElementById(`pkg-btn-link-${index}`).value;
-                });
-
-                // Save buttons
-                if (contentData.buttons) {
-                    contentData.buttons.forEach((button, index) => {
-                        button.text = document.getElementById(`btn-text-${index}`).value;
-                        button.link = document.getElementById(`btn-link-${index}`).value;
-                    });
-                }
-
-                // Save popup
-                if (contentData.popup) {
-                    contentData.popup.enabled = document.getElementById('popup-enabled').checked;
-                    contentData.popup.title = document.getElementById('popup-title').value;
-                    contentData.popup.message = document.getElementById('popup-message').value;
-                    contentData.popup.image = document.getElementById('popup-image').value;
-                    contentData.popup.buttonText = document.getElementById('popup-button-text').value;
-                    contentData.popup.buttonLink = document.getElementById('popup-button-link').value;
-                }
-
-                // Save parallax
-                if (contentData.parallax) {
-                    contentData.parallax.backgroundImage = document.getElementById('parallax-bg').value;
-                }
-
-                // Save pages
-                if (contentData.pages) {
-                    for (const pageId in contentData.pages) {
-                        contentData.pages[pageId].title = document.getElementById(`page-title-${pageId}`).value;
-                        contentData.pages[pageId].content = document.getElementById(`page-content-${pageId}`).value;
+                try {
+                    loading.show('Saving global settings...');
+                    let saveCount = 0;
+                    
+                    // Save popup if it exists
+                    const popupTitleElement = document.getElementById('popup-title');
+                    if (popupTitleElement && popupTitleElement.dataset.popupId) {
+                        const popupData = {
+                            title: document.getElementById('popup-title').value,
+                            description: document.getElementById('popup-message').value,
+                            image_url: document.getElementById('popup-image').value,
+                            button_text: document.getElementById('popup-button-text').value,
+                            button_url: document.getElementById('popup-button-link').value
+                        };
+                        
+                        await dbAPI.updatePopupItem(popupTitleElement.dataset.popupId, popupData);
+                        saveCount++;
                     }
-                }
 
-                if (contentData.__v) {
-                  delete contentData.__v;
-                }
+                    // Save parallax if it exists
+                    const parallaxBgElement = document.getElementById('parallax-bg');
+                    if (parallaxBgElement && parallaxBgElement.dataset.parallaxId) {
+                        const parallaxData = {
+                            image_url: parallaxBgElement.value
+                        };
+                        
+                        await dbAPI.updateParallaxItem(parallaxBgElement.dataset.parallaxId, parallaxData);
+                        saveCount++;
+                    }
 
-                const blob = new Blob([JSON.stringify(contentData, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'content.json';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                saveMessage.textContent = 'content.json has been downloaded!';
-                saveMessage.className = 'text-sm mt-4 text-green-500';
+                    if (saveCount > 0) {
+                        notify.success(`Successfully saved ${saveCount} global setting(s)`);
+                        saveMessage.textContent = `Global settings saved to database! (${saveCount} items)`;
+                        saveMessage.className = 'text-sm mt-4 text-green-500';
+                    } else {
+                        notify.info('No global settings to save');
+                        saveMessage.textContent = 'No changes to save for global settings.';
+                        saveMessage.className = 'text-sm mt-4 text-blue-500';
+                    }
+                } catch (error) {
+                    console.error('Error saving global settings:', error);
+                    notify.error('Failed to save global settings: ' + error.message);
+                    saveMessage.textContent = 'Error saving global settings!';
+                    saveMessage.className = 'text-sm mt-4 text-red-500';
+                } finally {
+                    loading.hide();
+                }
             });
 
             // Add logout functionality
