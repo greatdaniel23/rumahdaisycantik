@@ -299,6 +299,10 @@
                     }
                 }
 
+                if (contentData.__v) {
+                  delete contentData.__v;
+                }
+
                 try {
                     saveMessage.textContent = 'Saving...';
                     saveMessage.className = 'text-sm mt-4 text-gray-500';
