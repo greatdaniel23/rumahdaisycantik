@@ -16,26 +16,31 @@ class DatabaseMigration {
     public function runMigration() {
         echo "Starting database migration...\n";
         
-        try {
-            // Read and execute the setup SQL
-            $sqlFile = __DIR__ . '/database/setup.sql';
-            if (!file_exists($sqlFile)) {
-                throw new Exception("Setup SQL file not found: $sqlFile");
-            }
-            
-            $sql = file_get_contents($sqlFile);
-            $statements = explode(';', $sql);
-            
-            foreach ($statements as $statement) {
-                $statement = trim($statement);
-                if (!empty($statement)) {
-                    $this->db->exec($statement);
+            try {
+                // Check if enhanced schema exists, use it if available
+                $enhancedSqlFile = __DIR__ . '/database/enhanced-setup.sql';
+                $sqlFile = __DIR__ . '/database/setup.sql';
+                
+                if (file_exists($enhancedSqlFile)) {
+                    $sqlFile = $enhancedSqlFile;
+                    echo "Using enhanced database schema...\n";
+                } elseif (file_exists($sqlFile)) {
+                    echo "Using standard database schema...\n";
+                } else {
+                    throw new Exception("Setup SQL file not found");
                 }
-            }
-            
-            echo "✓ Database tables created successfully\n";
-            
-            // Import existing data from content.json
+                
+                $sql = file_get_contents($sqlFile);
+                $statements = explode(';', $sql);
+                
+                foreach ($statements as $statement) {
+                    $statement = trim($statement);
+                    if (!empty($statement)) {
+                        $this->db->exec($statement);
+                    }
+                }
+                
+                echo "✓ Database tables created successfully\n";            // Import existing data from content.json
             $this->importExistingData();
             
             echo "✓ Database migration completed successfully\n";

@@ -25,6 +25,24 @@
             <button id="add-image-btn" class="mt-6 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Add New Image</button>
         </div>
 
+        <!-- Room Types Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Room Types</h2>
+            <div id="room-types-container" class="space-y-8">
+                <!-- Room types sections will be dynamically added here -->
+            </div>
+            <button id="add-room-type-btn" class="mt-6 bg-indigo-500 text-white px-6 py-2 rounded-md hover:bg-indigo-600">Add New Room Type</button>
+        </div>
+
+        <!-- Rooms Management -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Rooms</h2>
+            <div id="rooms-container" class="space-y-8">
+                <!-- Rooms sections will be dynamically added here -->
+            </div>
+            <button id="add-room-btn" class="mt-6 bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600">Add New Room</button>
+        </div>
+
         <!-- Accommodation Management -->
         <div class="mb-12">
             <h2 class="text-2xl font-bold mb-6 border-b pb-2">Manage Accommodations</h2>
@@ -129,11 +147,15 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const imagesContainer = document.getElementById('images-container');
+            const roomTypesContainer = document.getElementById('room-types-container');
+            const roomsContainer = document.getElementById('rooms-container');
             const accommodationContainer = document.getElementById('accommodation-container');
             const buttonContainer = document.getElementById('button-container');
             const saveAllBtn = document.getElementById('save-all-btn');
-            const addAccommodationBtn = document.getElementById('add-accommodation-btn');
             const addImageBtn = document.getElementById('add-image-btn');
+            const addRoomTypeBtn = document.getElementById('add-room-type-btn');
+            const addRoomBtn = document.getElementById('add-room-btn');
+            const addAccommodationBtn = document.getElementById('add-accommodation-btn');
             const saveMessage = document.getElementById('save-message');
 
             // Test database connection on load
@@ -158,6 +180,8 @@
                     loading.show('Loading content...');
                     await Promise.all([
                         renderImages(),
+                        renderRoomTypes(),
+                        renderRooms(),
                         renderAccommodations(),
                         renderButtons(),
                         renderPopup(),
@@ -267,6 +291,410 @@
                 } catch (error) {
                     console.error('Error loading images:', error);
                     imagesContainer.innerHTML = '<p class="text-red-500">Error loading images. Please try again.</p>';
+                }
+            }
+
+            async function renderRoomTypes() {
+                try {
+                    const response = await dbAPI.getRoomTypes();
+                    const roomTypes = response.data || [];
+
+                    roomTypesContainer.innerHTML = '';
+                    roomTypes.forEach((roomType) => {
+                        const section = document.createElement('div');
+                        section.className = 'bg-white p-6 rounded-lg shadow-md relative';
+                        section.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-4">${roomType.name}</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <label for="rt-name-${roomType.id}" class="block text-sm font-medium text-gray-700 mb-1">Room Type Name</label>
+                                    <input type="text" id="rt-name-${roomType.id}" value="${roomType.name}" class="w-full border rounded-md p-2 mb-4" required>
+                                    
+                                    <label for="rt-base-price-${roomType.id}" class="block text-sm font-medium text-gray-700 mb-1">Base Price</label>
+                                    <input type="number" id="rt-base-price-${roomType.id}" value="${roomType.base_price}" class="w-full border rounded-md p-2 mb-4" step="0.01" required>
+                                    
+                                    <label for="rt-max-guests-${roomType.id}" class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+                                    <input type="number" id="rt-max-guests-${roomType.id}" value="${roomType.max_guests}" class="w-full border rounded-md p-2 mb-4" required>
+                                </div>
+                                <div>
+                                    <label for="rt-description-${roomType.id}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                    <textarea id="rt-description-${roomType.id}" class="w-full border rounded-md p-2 h-24 mb-4">${roomType.description || ''}</textarea>
+                                    
+                                    <label for="rt-size-${roomType.id}" class="block text-sm font-medium text-gray-700 mb-1">Size (sqm)</label>
+                                    <input type="number" id="rt-size-${roomType.id}" value="${roomType.size_sqm || ''}" class="w-full border rounded-md p-2 mb-4">
+                                    
+                                    <label for="rt-sort-order-${roomType.id}" class="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+                                    <input type="number" id="rt-sort-order-${roomType.id}" value="${roomType.sort_order || 0}" class="w-full border rounded-md p-2 mb-4">
+                                    
+                                    <div class="mt-4">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" id="rt-active-${roomType.id}" ${roomType.is_active ? 'checked' : ''} class="mr-2">
+                                            <span class="text-sm text-gray-700">Active</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <button class="save-room-type-btn bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600" data-id="${roomType.id}">Save Changes</button>
+                                <button class="delete-room-type-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" data-id="${roomType.id}">Delete</button>
+                            </div>
+                        `;
+                        roomTypesContainer.appendChild(section);
+                    });
+
+                    addRoomTypeEventListeners();
+                } catch (error) {
+                    console.error('Error loading room types:', error);
+                    roomTypesContainer.innerHTML = '<p class="text-red-500">Error loading room types. Please try again.</p>';
+                }
+            }
+
+            function addRoomTypeEventListeners() {
+                // Add save event listeners
+                document.querySelectorAll('.save-room-type-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const roomTypeId = e.target.dataset.id;
+                        try {
+                            loading.show('Saving room type...');
+                            const roomTypeData = {
+                                name: document.getElementById(`rt-name-${roomTypeId}`).value,
+                                description: document.getElementById(`rt-description-${roomTypeId}`).value,
+                                base_price: parseFloat(document.getElementById(`rt-base-price-${roomTypeId}`).value),
+                                max_guests: parseInt(document.getElementById(`rt-max-guests-${roomTypeId}`).value),
+                                size_sqm: parseInt(document.getElementById(`rt-size-${roomTypeId}`).value) || null,
+                                sort_order: parseInt(document.getElementById(`rt-sort-order-${roomTypeId}`).value) || 0,
+                                is_active: document.getElementById(`rt-active-${roomTypeId}`).checked
+                            };
+                            
+                            await dbAPI.updateRoomType(roomTypeId, roomTypeData);
+                            notify.success('Room type updated successfully');
+                        } catch (error) {
+                            console.error('Error saving room type:', error);
+                            notify.error('Failed to save room type: ' + error.message);
+                        } finally {
+                            loading.hide();
+                        }
+                    });
+                });
+
+                // Add delete event listeners
+                document.querySelectorAll('.delete-room-type-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const roomTypeId = e.target.dataset.id;
+                        if (confirm('Are you sure you want to delete this room type? This will also delete all associated rooms.')) {
+                            try {
+                                loading.show('Deleting room type...');
+                                await dbAPI.deleteRoomType(roomTypeId);
+                                notify.success('Room type deleted successfully');
+                                await renderRoomTypes();
+                                await renderRooms(); // Refresh rooms too
+                            } catch (error) {
+                                console.error('Error deleting room type:', error);
+                                notify.error('Failed to delete room type: ' + error.message);
+                            } finally {
+                                loading.hide();
+                            }
+                        }
+                    });
+                });
+            }
+
+            async function renderRooms() {
+                try {
+                    const [roomsResponse, roomTypesResponse] = await Promise.all([
+                        dbAPI.getRooms(),
+                        dbAPI.getRoomTypes()
+                    ]);
+                    
+                    const rooms = roomsResponse.data || [];
+                    const roomTypes = roomTypesResponse.data || [];
+
+                    roomsContainer.innerHTML = '';
+                    rooms.forEach((room) => {
+                        const section = document.createElement('div');
+                        section.className = 'bg-white p-6 rounded-lg shadow-md relative';
+                        section.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-4">Room ${room.room_number} - ${room.name}</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="room-number-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Room Number</label>
+                                    <input type="text" id="room-number-${room.id}" value="${room.room_number}" class="w-full border rounded-md p-2 mb-4" required>
+                                    
+                                    <label for="room-name-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Room Name</label>
+                                    <input type="text" id="room-name-${room.id}" value="${room.name}" class="w-full border rounded-md p-2 mb-4" required>
+                                    
+                                    <label for="room-type-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                                    <select id="room-type-${room.id}" class="w-full border rounded-md p-2 mb-4" required>
+                                        ${roomTypes.map(rt => `<option value="${rt.id}" ${rt.id == room.room_type_id ? 'selected' : ''}>${rt.name}</option>`).join('')}
+                                    </select>
+                                    
+                                    <label for="room-price-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Price per Night</label>
+                                    <input type="number" id="room-price-${room.id}" value="${room.price_per_night}" class="w-full border rounded-md p-2 mb-4" step="0.01" required>
+                                </div>
+                                <div>
+                                    <label for="room-max-guests-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Max Guests</label>
+                                    <input type="number" id="room-max-guests-${room.id}" value="${room.max_guests}" class="w-full border rounded-md p-2 mb-4">
+                                    
+                                    <div class="grid grid-cols-2 gap-2 mb-4">
+                                        <div>
+                                            <label for="room-bedrooms-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Bedrooms</label>
+                                            <input type="number" id="room-bedrooms-${room.id}" value="${room.bedrooms || 1}" class="w-full border rounded-md p-2">
+                                        </div>
+                                        <div>
+                                            <label for="room-bathrooms-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Bathrooms</label>
+                                            <input type="number" id="room-bathrooms-${room.id}" value="${room.bathrooms || 1}" class="w-full border rounded-md p-2">
+                                        </div>
+                                    </div>
+                                    
+                                    <label for="room-view-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">View Type</label>
+                                    <select id="room-view-${room.id}" class="w-full border rounded-md p-2 mb-4">
+                                        <option value="">Select View</option>
+                                        <option value="pool" ${room.view_type === 'pool' ? 'selected' : ''}>Pool</option>
+                                        <option value="garden" ${room.view_type === 'garden' ? 'selected' : ''}>Garden</option>
+                                        <option value="jungle" ${room.view_type === 'jungle' ? 'selected' : ''}>Jungle</option>
+                                        <option value="ocean" ${room.view_type === 'ocean' ? 'selected' : ''}>Ocean</option>
+                                        <option value="mountain" ${room.view_type === 'mountain' ? 'selected' : ''}>Mountain</option>
+                                    </select>
+                                    
+                                    <label for="room-status-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                    <select id="room-status-${room.id}" class="w-full border rounded-md p-2 mb-4">
+                                        <option value="available" ${room.status === 'available' ? 'selected' : ''}>Available</option>
+                                        <option value="occupied" ${room.status === 'occupied' ? 'selected' : ''}>Occupied</option>
+                                        <option value="maintenance" ${room.status === 'maintenance' ? 'selected' : ''}>Maintenance</option>
+                                        <option value="out_of_order" ${room.status === 'out_of_order' ? 'selected' : ''}>Out of Order</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="room-description-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                    <textarea id="room-description-${room.id}" class="w-full border rounded-md p-2 h-20 mb-4">${room.description || ''}</textarea>
+                                    
+                                    <label for="room-bed-type-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Bed Type</label>
+                                    <input type="text" id="room-bed-type-${room.id}" value="${room.bed_type || ''}" class="w-full border rounded-md p-2 mb-4" placeholder="e.g. King, Queen, Twin">
+                                    
+                                    <div class="grid grid-cols-2 gap-2 mb-4">
+                                        <div>
+                                            <label for="room-floor-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Floor</label>
+                                            <input type="number" id="room-floor-${room.id}" value="${room.floor || ''}" class="w-full border rounded-md p-2">
+                                        </div>
+                                        <div>
+                                            <label for="room-size-${room.id}" class="block text-sm font-medium text-gray-700 mb-1">Size (sqm)</label>
+                                            <input type="number" id="room-size-${room.id}" value="${room.size_sqm || ''}" class="w-full border rounded-md p-2">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="room-active-${room.id}" ${room.is_active ? 'checked' : ''} class="mr-2">
+                                        <label for="room-active-${room.id}" class="text-sm text-gray-700">Active</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <button class="save-room-btn bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600" data-id="${room.id}">Save Changes</button>
+                                <button class="manage-amenities-btn bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600" data-id="${room.id}">Manage Amenities</button>
+                                <button class="delete-room-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" data-id="${room.id}">Delete</button>
+                            </div>
+                        `;
+                        roomsContainer.appendChild(section);
+                    });
+
+                    addRoomEventListeners();
+                } catch (error) {
+                    console.error('Error loading rooms:', error);
+                    roomsContainer.innerHTML = '<p class="text-red-500">Error loading rooms. Please try again.</p>';
+                }
+            }
+
+            function addRoomEventListeners() {
+                // Add save event listeners
+                document.querySelectorAll('.save-room-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const roomId = e.target.dataset.id;
+                        try {
+                            loading.show('Saving room...');
+                            const roomData = {
+                                room_number: document.getElementById(`room-number-${roomId}`).value,
+                                room_type_id: parseInt(document.getElementById(`room-type-${roomId}`).value),
+                                name: document.getElementById(`room-name-${roomId}`).value,
+                                description: document.getElementById(`room-description-${roomId}`).value,
+                                floor: parseInt(document.getElementById(`room-floor-${roomId}`).value) || null,
+                                view_type: document.getElementById(`room-view-${roomId}`).value || null,
+                                price_per_night: parseFloat(document.getElementById(`room-price-${roomId}`).value),
+                                max_guests: parseInt(document.getElementById(`room-max-guests-${roomId}`).value),
+                                bedrooms: parseInt(document.getElementById(`room-bedrooms-${roomId}`).value),
+                                bathrooms: parseInt(document.getElementById(`room-bathrooms-${roomId}`).value),
+                                size_sqm: parseInt(document.getElementById(`room-size-${roomId}`).value) || null,
+                                bed_type: document.getElementById(`room-bed-type-${roomId}`).value || null,
+                                status: document.getElementById(`room-status-${roomId}`).value,
+                                is_active: document.getElementById(`room-active-${roomId}`).checked
+                            };
+                            
+                            await dbAPI.updateRoom(roomId, roomData);
+                            notify.success('Room updated successfully');
+                        } catch (error) {
+                            console.error('Error saving room:', error);
+                            notify.error('Failed to save room: ' + error.message);
+                        } finally {
+                            loading.hide();
+                        }
+                    });
+                });
+
+                // Add delete event listeners
+                document.querySelectorAll('.delete-room-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const roomId = e.target.dataset.id;
+                        if (confirm('Are you sure you want to delete this room? This will also delete all associated amenities and images.')) {
+                            try {
+                                loading.show('Deleting room...');
+                                await dbAPI.deleteRoom(roomId);
+                                notify.success('Room deleted successfully');
+                                await renderRooms();
+                            } catch (error) {
+                                console.error('Error deleting room:', error);
+                                notify.error('Failed to delete room: ' + error.message);
+                            } finally {
+                                loading.hide();
+                            }
+                        }
+                    });
+                });
+
+                // Add manage amenities event listeners
+                document.querySelectorAll('.manage-amenities-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const roomId = e.target.dataset.id;
+                        openAmenitiesModal(roomId);
+                    });
+                });
+            }
+
+            async function openAmenitiesModal(roomId) {
+                // Create modal for managing amenities
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                modal.innerHTML = `
+                    <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+                        <h3 class="text-xl font-semibold mb-4">Manage Room Amenities</h3>
+                        <div id="amenities-form">
+                            <div id="amenities-list" class="space-y-4 mb-4">
+                                <!-- Amenities will be loaded here -->
+                            </div>
+                            <button id="add-amenity-btn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Amenity</button>
+                        </div>
+                        <div class="mt-6 flex justify-end gap-2">
+                            <button id="save-amenities-btn" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Save All</button>
+                            <button id="close-modal-btn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                try {
+                    // Load existing amenities
+                    const response = await dbAPI.getRoomAmenities(roomId);
+                    const amenities = response.data || [];
+                    renderAmenitiesForm(amenities);
+                } catch (error) {
+                    console.error('Error loading amenities:', error);
+                    notify.error('Failed to load amenities');
+                }
+
+                // Event listeners
+                document.getElementById('add-amenity-btn').addEventListener('click', () => {
+                    addAmenityRow();
+                });
+
+                document.getElementById('save-amenities-btn').addEventListener('click', async () => {
+                    await saveAmenities(roomId);
+                    modal.remove();
+                });
+
+                document.getElementById('close-modal-btn').addEventListener('click', () => {
+                    modal.remove();
+                });
+            }
+
+            function renderAmenitiesForm(amenities) {
+                const amenitiesList = document.getElementById('amenities-list');
+                amenitiesList.innerHTML = '';
+
+                amenities.forEach((amenity, index) => {
+                    addAmenityRow(amenity, index);
+                });
+
+                if (amenities.length === 0) {
+                    addAmenityRow();
+                }
+            }
+
+            function addAmenityRow(amenity = null, index = null) {
+                const amenitiesList = document.getElementById('amenities-list');
+                const newIndex = index !== null ? index : amenitiesList.children.length;
+                
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-1 md:grid-cols-5 gap-4 p-4 border rounded';
+                row.innerHTML = `
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Amenity Name</label>
+                        <input type="text" class="amenity-name w-full border rounded p-2" value="${amenity?.amenity_name || ''}" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                        <select class="amenity-type w-full border rounded p-2">
+                            <option value="comfort" ${amenity?.amenity_type === 'comfort' ? 'selected' : ''}>Comfort</option>
+                            <option value="technology" ${amenity?.amenity_type === 'technology' ? 'selected' : ''}>Technology</option>
+                            <option value="bathroom" ${amenity?.amenity_type === 'bathroom' ? 'selected' : ''}>Bathroom</option>
+                            <option value="kitchen" ${amenity?.amenity_type === 'kitchen' ? 'selected' : ''}>Kitchen</option>
+                            <option value="outdoor" ${amenity?.amenity_type === 'outdoor' ? 'selected' : ''}>Outdoor</option>
+                            <option value="service" ${amenity?.amenity_type === 'service' ? 'selected' : ''}>Service</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Icon (FontAwesome)</label>
+                        <input type="text" class="amenity-icon w-full border rounded p-2" value="${amenity?.icon || ''}" placeholder="fas fa-wifi">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <input type="text" class="amenity-description w-full border rounded p-2" value="${amenity?.description || ''}">
+                    </div>
+                    <div class="flex items-end">
+                        <label class="flex items-center mr-2">
+                            <input type="checkbox" class="amenity-highlighted mr-1" ${amenity?.is_highlighted ? 'checked' : ''}>
+                            <span class="text-sm">Highlight</span>
+                        </label>
+                        <button type="button" class="remove-amenity bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600">Remove</button>
+                    </div>
+                `;
+                
+                amenitiesList.appendChild(row);
+
+                // Add remove functionality
+                row.querySelector('.remove-amenity').addEventListener('click', () => {
+                    row.remove();
+                });
+            }
+
+            async function saveAmenities(roomId) {
+                const amenitiesList = document.getElementById('amenities-list');
+                const amenityRows = amenitiesList.querySelectorAll('.grid');
+                
+                const amenities = Array.from(amenityRows).map(row => ({
+                    amenity_name: row.querySelector('.amenity-name').value,
+                    amenity_type: row.querySelector('.amenity-type').value,
+                    icon: row.querySelector('.amenity-icon').value || null,
+                    description: row.querySelector('.amenity-description').value || null,
+                    is_highlighted: row.querySelector('.amenity-highlighted').checked
+                })).filter(amenity => amenity.amenity_name.trim());
+
+                try {
+                    loading.show('Saving amenities...');
+                    await dbAPI.updateRoomAmenities(roomId, amenities);
+                    notify.success('Room amenities updated successfully');
+                } catch (error) {
+                    console.error('Error saving amenities:', error);
+                    notify.error('Failed to save amenities: ' + error.message);
+                } finally {
+                    loading.hide();
                 }
             }
 
@@ -674,6 +1102,68 @@
                 } catch (error) {
                     console.error('Error creating image:', error);
                     notify.error('Failed to create image: ' + error.message);
+                } finally {
+                    loading.hide();
+                }
+            });
+
+            addRoomTypeBtn.addEventListener('click', async () => {
+                try {
+                    loading.show('Creating new room type...');
+                    const newRoomTypeData = {
+                        name: "New Room Type",
+                        description: "Description for the new room type",
+                        base_price: 100.00,
+                        max_guests: 2,
+                        size_sqm: 25,
+                        is_active: true,
+                        sort_order: 0
+                    };
+                    
+                    await dbAPI.createRoomType(newRoomTypeData);
+                    notify.success('New room type created successfully');
+                    await renderRoomTypes();
+                    await renderRooms(); // Refresh rooms dropdown
+                } catch (error) {
+                    console.error('Error creating room type:', error);
+                    notify.error('Failed to create room type: ' + error.message);
+                } finally {
+                    loading.hide();
+                }
+            });
+
+            addRoomBtn.addEventListener('click', async () => {
+                try {
+                    // Get room types for validation
+                    const roomTypesResponse = await dbAPI.getRoomTypes();
+                    const roomTypes = roomTypesResponse.data || [];
+                    
+                    if (roomTypes.length === 0) {
+                        notify.warning('Please create at least one room type first');
+                        return;
+                    }
+
+                    loading.show('Creating new room...');
+                    const newRoomData = {
+                        room_number: `R${Date.now().toString().slice(-3)}`,
+                        room_type_id: roomTypes[0].id,
+                        name: "New Room",
+                        description: "Description for the new room",
+                        price_per_night: 120.00,
+                        max_guests: 2,
+                        bedrooms: 1,
+                        bathrooms: 1,
+                        view_type: "garden",
+                        status: "available",
+                        is_active: true
+                    };
+                    
+                    await dbAPI.createRoom(newRoomData);
+                    notify.success('New room created successfully');
+                    await renderRooms();
+                } catch (error) {
+                    console.error('Error creating room:', error);
+                    notify.error('Failed to create room: ' + error.message);
                 } finally {
                     loading.hide();
                 }

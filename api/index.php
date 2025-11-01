@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../middleware/auth.php';
 require_once __DIR__ . '/../models/ContentModel.php';
+require_once __DIR__ . '/../models/RoomModel.php';
 
 // Enable CORS
 CorsHandler::handle();
@@ -39,6 +40,22 @@ try {
             
         case 'accommodations':
             handleAccommodationsApi($method, $id, $input);
+            break;
+            
+        case 'room-types':
+            handleRoomTypesApi($method, $id, $input);
+            break;
+            
+        case 'rooms':
+            handleRoomsApi($method, $id, $input);
+            break;
+            
+        case 'room-amenities':
+            handleRoomAmenitiesApi($method, $id, $input);
+            break;
+            
+        case 'room-images':
+            handleRoomImagesApi($method, $id, $input);
             break;
             
         case 'popup':
@@ -352,6 +369,212 @@ function handlePagesApi($method, $id, $input) {
 }
 
 /**
+ * Room Types API Handler
+ */
+function handleRoomTypesApi($method, $id, $input) {
+    $model = new RoomTypesModel();
+    
+    switch ($method) {
+        case 'GET':
+            if ($id) {
+                $roomType = $model->findById($id);
+                if (!$roomType) {
+                    ApiResponse::notFound('Room Type');
+                }
+                ApiResponse::success($roomType);
+            } else {
+                $roomTypes = $model->findAll();
+                ApiResponse::success($roomTypes);
+            }
+            break;
+            
+        case 'POST':
+            $roomType = $model->create($input);
+            ApiResponse::success($roomType, 'Room type created successfully', 201);
+            break;
+            
+        case 'PUT':
+            if (!$id) {
+                ApiResponse::error('Room Type ID is required');
+            }
+            $roomType = $model->update($id, $input);
+            ApiResponse::success($roomType, 'Room type updated successfully');
+            break;
+            
+        case 'DELETE':
+            if (!$id) {
+                ApiResponse::error('Room Type ID is required');
+            }
+            $model->delete($id);
+            ApiResponse::success(null, 'Room type deleted successfully');
+            break;
+            
+        default:
+            ApiResponse::error('Method not allowed', 405);
+    }
+}
+
+/**
+ * Rooms API Handler
+ */
+function handleRoomsApi($method, $id, $input) {
+    $model = new RoomsModel();
+    
+    switch ($method) {
+        case 'GET':
+            if ($id) {
+                $room = $model->findById($id);
+                if (!$room) {
+                    ApiResponse::notFound('Room');
+                }
+                ApiResponse::success($room);
+            } else {
+                // Check for filters
+                $roomTypeId = $_GET['room_type_id'] ?? null;
+                $status = $_GET['status'] ?? null;
+                
+                if ($roomTypeId) {
+                    $rooms = $model->findByRoomType($roomTypeId);
+                } elseif ($status) {
+                    $rooms = $model->findByStatus($status);
+                } else {
+                    $rooms = $model->findAll();
+                }
+                
+                ApiResponse::success($rooms);
+            }
+            break;
+            
+        case 'POST':
+            $room = $model->create($input);
+            ApiResponse::success($room, 'Room created successfully', 201);
+            break;
+            
+        case 'PUT':
+            if (!$id) {
+                ApiResponse::error('Room ID is required');
+            }
+            $room = $model->update($id, $input);
+            ApiResponse::success($room, 'Room updated successfully');
+            break;
+            
+        case 'DELETE':
+            if (!$id) {
+                ApiResponse::error('Room ID is required');
+            }
+            $model->delete($id);
+            ApiResponse::success(null, 'Room deleted successfully');
+            break;
+            
+        default:
+            ApiResponse::error('Method not allowed', 405);
+    }
+}
+
+/**
+ * Room Amenities API Handler
+ */
+function handleRoomAmenitiesApi($method, $id, $input) {
+    $model = new RoomAmenitiesModel();
+    
+    switch ($method) {
+        case 'GET':
+            if ($id) {
+                $amenity = $model->findById($id);
+                if (!$amenity) {
+                    ApiResponse::notFound('Room Amenity');
+                }
+                ApiResponse::success($amenity);
+            } else {
+                $roomId = $_GET['room_id'] ?? null;
+                if ($roomId) {
+                    $amenities = $model->findByRoomId($roomId);
+                    ApiResponse::success($amenities);
+                } else {
+                    ApiResponse::error('room_id parameter is required');
+                }
+            }
+            break;
+            
+        case 'POST':
+            // Check if this is a bulk update
+            if (isset($input['room_id']) && isset($input['amenities']) && is_array($input['amenities'])) {
+                $amenities = $model->bulkCreate($input['room_id'], $input['amenities']);
+                ApiResponse::success($amenities, 'Room amenities updated successfully');
+            } else {
+                $amenity = $model->create($input);
+                ApiResponse::success($amenity, 'Room amenity created successfully', 201);
+            }
+            break;
+            
+        case 'PUT':
+            if (!$id) {
+                ApiResponse::error('Room Amenity ID is required');
+            }
+            $amenity = $model->update($id, $input);
+            ApiResponse::success($amenity, 'Room amenity updated successfully');
+            break;
+            
+        case 'DELETE':
+            if (!$id) {
+                ApiResponse::error('Room Amenity ID is required');
+            }
+            $model->delete($id);
+            ApiResponse::success(null, 'Room amenity deleted successfully');
+            break;
+            
+        default:
+            ApiResponse::error('Method not allowed', 405);
+    }
+}
+
+/**
+ * Room Images API Handler
+ */
+function handleRoomImagesApi($method, $id, $input) {
+    $model = new RoomImagesModel();
+    
+    switch ($method) {
+        case 'GET':
+            $roomId = $_GET['room_id'] ?? null;
+            if ($roomId) {
+                $images = $model->findByRoomId($roomId);
+                ApiResponse::success($images);
+            } else {
+                ApiResponse::error('room_id parameter is required');
+            }
+            break;
+            
+        case 'POST':
+            if (!isset($input['room_id']) || !isset($input['image_id'])) {
+                ApiResponse::error('room_id and image_id are required');
+            }
+            
+            $result = $model->addImageToRoom(
+                $input['room_id'],
+                $input['image_id'],
+                $input['is_primary'] ?? false,
+                $input['sort_order'] ?? 0
+            );
+            
+            ApiResponse::success($result, 'Image added to room successfully', 201);
+            break;
+            
+        case 'DELETE':
+            if (!isset($input['room_id']) || !isset($input['image_id'])) {
+                ApiResponse::error('room_id and image_id are required');
+            }
+            
+            $model->removeImageFromRoom($input['room_id'], $input['image_id']);
+            ApiResponse::success(null, 'Image removed from room successfully');
+            break;
+            
+        default:
+            ApiResponse::error('Method not allowed', 405);
+    }
+}
+
+/**
  * Health Check Handler
  */
 function handleHealthCheck() {
@@ -362,7 +585,7 @@ function handleHealthCheck() {
         'status' => $isHealthy ? 'healthy' : 'unhealthy',
         'database' => $isHealthy ? 'connected' : 'disconnected',
         'timestamp' => date('c'),
-        'version' => '1.0.0'
+        'version' => '2.0.0'
     ], 'API is ' . ($isHealthy ? 'healthy' : 'unhealthy'));
 }
 ?>

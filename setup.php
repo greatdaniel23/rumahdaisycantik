@@ -65,12 +65,16 @@
                 </p>
                 
                 <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
-                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">What this setup will do:</h3>
+                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">What this enhanced setup will do:</h3>
                     <ul class="list-disc list-inside text-yellow-700 space-y-1">
-                        <li>Create database tables for images, accommodations, buttons, popup, parallax, and pages</li>
+                        <li>Create enhanced database tables including dedicated room management system</li>
+                        <li>Set up room types, individual rooms, and room amenities management</li>
+                        <li>Create tables for images, accommodations, buttons, popup, parallax, and pages</li>
                         <li>Import all existing data from content.json into the database</li>
+                        <li>Create sample room types and rooms with amenities</li>
                         <li>Create a backup of your current content.json file</li>
                         <li>Enable real-time content management through the admin panel</li>
+                        <li>Support for room image galleries and detailed room information</li>
                     </ul>
                 </div>
                 

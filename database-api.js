@@ -284,6 +284,145 @@ class DatabaseAPI {
     }
     
     // ===================
+    // ROOM TYPES API
+    // ===================
+    
+    async getRoomTypes() {
+        return await this.makeRequest('/room-types');
+    }
+    
+    async getRoomType(id) {
+        return await this.makeRequest(`/room-types/${id}`);
+    }
+    
+    async createRoomType(roomTypeData) {
+        return await this.makeRequest('/room-types', {
+            method: 'POST',
+            body: JSON.stringify(roomTypeData)
+        });
+    }
+    
+    async updateRoomType(id, roomTypeData) {
+        return await this.makeRequest(`/room-types/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(roomTypeData)
+        });
+    }
+    
+    async deleteRoomType(id) {
+        return await this.makeRequest(`/room-types/${id}`, {
+            method: 'DELETE'
+        });
+    }
+    
+    // ===================
+    // ROOMS API
+    // ===================
+    
+    async getRooms(filters = {}) {
+        let endpoint = '/rooms';
+        const params = new URLSearchParams();
+        
+        if (filters.room_type_id) params.append('room_type_id', filters.room_type_id);
+        if (filters.status) params.append('status', filters.status);
+        
+        if (params.toString()) {
+            endpoint += '?' + params.toString();
+        }
+        
+        return await this.makeRequest(endpoint);
+    }
+    
+    async getRoom(id) {
+        return await this.makeRequest(`/rooms/${id}`);
+    }
+    
+    async createRoom(roomData) {
+        return await this.makeRequest('/rooms', {
+            method: 'POST',
+            body: JSON.stringify(roomData)
+        });
+    }
+    
+    async updateRoom(id, roomData) {
+        return await this.makeRequest(`/rooms/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(roomData)
+        });
+    }
+    
+    async deleteRoom(id) {
+        return await this.makeRequest(`/rooms/${id}`, {
+            method: 'DELETE'
+        });
+    }
+    
+    // ===================
+    // ROOM AMENITIES API
+    // ===================
+    
+    async getRoomAmenities(roomId) {
+        return await this.makeRequest(`/room-amenities?room_id=${roomId}`);
+    }
+    
+    async getRoomAmenity(id) {
+        return await this.makeRequest(`/room-amenities/${id}`);
+    }
+    
+    async createRoomAmenity(amenityData) {
+        return await this.makeRequest('/room-amenities', {
+            method: 'POST',
+            body: JSON.stringify(amenityData)
+        });
+    }
+    
+    async updateRoomAmenities(roomId, amenities) {
+        return await this.makeRequest('/room-amenities', {
+            method: 'POST',
+            body: JSON.stringify({
+                room_id: roomId,
+                amenities: amenities
+            })
+        });
+    }
+    
+    async deleteRoomAmenity(id) {
+        return await this.makeRequest(`/room-amenities/${id}`, {
+            method: 'DELETE'
+        });
+    }
+    
+    // ===================
+    // ROOM IMAGES API
+    // ===================
+    
+    async getRoomImages(roomId) {
+        return await this.makeRequest(`/room-images?room_id=${roomId}`);
+    }
+    
+    async addImageToRoom(roomId, imageId, isPrimary = false, sortOrder = 0) {
+        return await this.makeRequest('/room-images', {
+            method: 'POST',
+            body: JSON.stringify({
+                room_id: roomId,
+                image_id: imageId,
+                is_primary: isPrimary,
+                sort_order: sortOrder
+            })
+        });
+    }
+    
+    async removeImageFromRoom(roomId, imageId) {
+        return await this.makeRequest('/room-images', {
+            method: 'DELETE',
+            body: JSON.stringify({
+                room_id: roomId,
+                image_id: imageId
+            })
+        });
+    }
+    
+    // ===================
     // UTILITY METHODS
     // ===================
     
