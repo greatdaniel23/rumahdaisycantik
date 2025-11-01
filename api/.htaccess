@@ -1,8 +1,9 @@
 RewriteEngine On
 
-# API routing - redirect all /api requests to api/index.php
-RewriteCond %{REQUEST_URI} ^/api/(.*)$
-RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+# API routing - handle requests within the api directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Optional: Enable CORS for API requests
 <FilesMatch "\.(php)$">

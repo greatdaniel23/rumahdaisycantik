@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../middleware/auth.php';
-require_once __DIR__ . '/../models/ContentModel.php';
-require_once __DIR__ . '/../models/RoomModel.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/middleware/auth.php';
+require_once __DIR__ . '/models/ContentModel.php';
+require_once __DIR__ . '/models/RoomModel.php';
 
 // Enable CORS
 CorsHandler::handle();
