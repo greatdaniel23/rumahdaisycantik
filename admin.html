@@ -122,28 +122,22 @@
     <script src="database-api.js"></script>
     
     <script>
-        // Authentication check - must be at the top
-        function checkAuthentication() {
-            const authData = JSON.parse(sessionStorage.getItem('adminAuth') || '{}');
-            const currentTime = new Date().getTime();
-            const sessionTimeout = 30 * 60 * 1000; // 30 minutes
-
-            // Check if user is authenticated and session hasn't expired
-            if (!authData.authenticated || !authData.timestamp || (currentTime - authData.timestamp) > sessionTimeout) {
-                // Clear any existing session data
-                sessionStorage.removeItem('adminAuth');
-                // Redirect to login page
+        // Authentication check
+        async function checkAuthentication() {
+            try {
+                const response = await fetch('/api/auth.php');
+                const data = await response.json();
+                if (!data.data.loggedIn) {
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('Authentication check failed:', error);
                 window.location.href = 'login.html';
-                return false;
             }
-            return true;
         }
 
-        // Check authentication immediately when page loads
-        if (!checkAuthentication()) {
-            // Stop script execution if not authenticated
-            throw new Error('Not authenticated');
-        }
+        // Perform authentication check
+        checkAuthentication();
 
         document.addEventListener('DOMContentLoaded', async () => {
             const imagesContainer = document.getElementById('images-container');
@@ -1263,18 +1257,15 @@
         });
 
         // Logout function
-        function logout() {
-            sessionStorage.removeItem('adminAuthenticated');
-            sessionStorage.removeItem('adminLoginTime');
-            window.location.href = 'login.html';
-        }
-
-        // Prevent back button after logout
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted) {
-                checkAuthentication();
+        async function logout() {
+            try {
+                await fetch('/api/auth.php', { method: 'DELETE' });
+            } catch (error) {
+                console.error('Logout failed:', error);
+            } finally {
+                window.location.href = 'login.html';
             }
-        });
+        }
     </script>
 </body>
 </html>
