@@ -118,56 +118,272 @@
             <p class="text-xs text-gray-500 mt-2">Note: Individual items are saved automatically when you click their respective "Save Changes" buttons.</p>
         </div>
     </div>
-    <!-- Load Database API Client -->
-    <script src="database-api.js"></script>
-    
     <script>
-        // Authentication check
-        async function checkAuthentication() {
-            try {
-                const response = await fetch('/api/auth.php');
-                const data = await response.json();
-                if (!data.data.loggedIn) {
-                    window.location.href = 'login.html';
-                }
-            } catch (error) {
-                console.error('Authentication check failed:', error);
-                window.location.href = 'login.html';
-            }
+        // Authentication disabled - direct access allowed
+        function checkAuthentication() {
+            // No authentication check - always allow access
+            return true;
         }
 
-        // Perform authentication check
-        checkAuthentication();
+        // Global content data
+        let contentData = {};
 
         document.addEventListener('DOMContentLoaded', async () => {
             const imagesContainer = document.getElementById('images-container');
             const roomTypesContainer = document.getElementById('room-types-container');
             const roomsContainer = document.getElementById('rooms-container');
             const accommodationContainer = document.getElementById('accommodation-container');
-            const buttonContainer = document.getElementById('button-container');
-            const saveAllBtn = document.getElementById('save-all-btn');
             const addImageBtn = document.getElementById('add-image-btn');
             const addRoomTypeBtn = document.getElementById('add-room-type-btn');
             const addRoomBtn = document.getElementById('add-room-btn');
             const addAccommodationBtn = document.getElementById('add-accommodation-btn');
-            const saveMessage = document.getElementById('save-message');
 
-            // Test database connection on load
+            // Load content from JSON file
             try {
-                loading.show('Connecting to database...');
-                const healthCheck = await dbAPI.testConnection();
-                if (healthCheck.success) {
-                    notify.success('Database connected successfully');
-                    await loadAllContent();
-                } else {
-                    notify.error('Database connection failed');
-                }
+                showMessage('Loading content...', 'info');
+                await loadContentFromJSON();
+                renderAllSections();
+                showMessage('Content loaded successfully!', 'success');
             } catch (error) {
-                console.error('Database connection error:', error);
-                notify.error('Failed to connect to database: ' + error.message);
-            } finally {
-                loading.hide();
+                console.error('Error loading content:', error);
+                showMessage('Failed to load content. Using empty data.', 'warning');
+                initializeEmptyContent();
+                renderAllSections();
             }
+
+            // Add event listeners
+            addImageBtn?.addEventListener('click', () => addNewImage());
+            addRoomTypeBtn?.addEventListener('click', () => addNewRoomType());
+            addRoomBtn?.addEventListener('click', () => addNewRoom());
+            addAccommodationBtn?.addEventListener('click', () => addNewAccommodation());
+        });
+
+        // Load content from content.json
+        async function loadContentFromJSON() {
+            const response = await fetch('./content.json');
+            if (!response.ok) {
+                throw new Error('Failed to load content.json');
+            }
+            contentData = await response.json();
+        }
+
+        // Initialize empty content structure
+        function initializeEmptyContent() {
+            contentData = {
+                images: [],
+                accommodations: [],
+                roomTypes: [],
+                rooms: []
+            };
+        }
+
+        // Show message to user
+        function showMessage(message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            // You can enhance this to show actual UI notifications
+        }
+
+        // Render all sections
+        function renderAllSections() {
+            renderImages();
+            renderAccommodations();
+            // Room types and rooms can be added later if needed
+        }
+
+        // Render images section
+        function renderImages() {
+            const container = document.getElementById('images-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            
+            if (contentData.images && contentData.images.length > 0) {
+                contentData.images.forEach((image, index) => {
+                    const imageDiv = createImageEditor(image, index);
+                    container.appendChild(imageDiv);
+                });
+            } else {
+                container.innerHTML = '<p class="text-gray-500">No images found. Click "Add New Image" to get started.</p>';
+            }
+        }
+
+        // Create image editor
+        function createImageEditor(image, index) {
+            const div = document.createElement('div');
+            div.className = 'bg-white p-6 rounded-lg shadow-md border';
+            div.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">Image ${index + 1}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image ID</label>
+                        <input type="text" value="${image.id || ''}" 
+                               class="w-full p-2 border rounded-md" 
+                               onchange="updateImage(${index}, 'id', this.value)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image Source</label>
+                        <input type="text" value="${image.src || ''}" 
+                               class="w-full p-2 border rounded-md" 
+                               onchange="updateImage(${index}, 'src', this.value)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Alt Text</label>
+                        <input type="text" value="${image.alt || ''}" 
+                               class="w-full p-2 border rounded-md" 
+                               onchange="updateImage(${index}, 'alt', this.value)">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="removeImage(${index})" 
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                            Remove Image
+                        </button>
+                    </div>
+                </div>
+                ${image.src ? `<div class="mt-4"><img src="${image.src}" alt="${image.alt}" class="max-w-xs max-h-32 object-cover rounded"></div>` : ''}
+            `;
+            return div;
+        }
+
+        // Render accommodations section
+        function renderAccommodations() {
+            const container = document.getElementById('accommodation-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            
+            if (contentData.accommodations && contentData.accommodations.length > 0) {
+                contentData.accommodations.forEach((acc, index) => {
+                    const accDiv = createAccommodationEditor(acc, index);
+                    container.appendChild(accDiv);
+                });
+            } else {
+                container.innerHTML = '<p class="text-gray-500">No accommodations found. Click "Add New Accommodation" to get started.</p>';
+            }
+        }
+
+        // Create accommodation editor
+        function createAccommodationEditor(acc, index) {
+            const div = document.createElement('div');
+            div.className = 'bg-white p-6 rounded-lg shadow-md border';
+            div.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4">Accommodation ${index + 1}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Title</label>
+                        <input type="text" value="${acc.title || ''}" 
+                               class="w-full p-2 border rounded-md" 
+                               onchange="updateAccommodation(${index}, 'title', this.value)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Image Source</label>
+                        <input type="text" value="${acc.imageSrc || ''}" 
+                               class="w-full p-2 border rounded-md" 
+                               onchange="updateAccommodation(${index}, 'imageSrc', this.value)">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-2">Description</label>
+                        <textarea class="w-full p-2 border rounded-md" rows="3" 
+                                  onchange="updateAccommodation(${index}, 'description', this.value)">${acc.description || ''}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Button Text</label>
+                        <input type="text" value="${acc.buttonText || ''}" 
+                               class="w-full p-2 border rounded-md" 
+                               onchange="updateAccommodation(${index}, 'buttonText', this.value)">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Button Link</label>
+                        <input type="text" value="${acc.buttonLink || ''}" 
+                               class="w-full p-2 border rounded-md" 
+                               onchange="updateAccommodation(${index}, 'buttonLink', this.value)">
+                    </div>
+                    <div class="md:col-span-2 flex justify-between">
+                        <button onclick="removeAccommodation(${index})" 
+                                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                            Remove Accommodation
+                        </button>
+                        <button onclick="saveContent()" 
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+                ${acc.imageSrc ? `<div class="mt-4"><img src="${acc.imageSrc}" alt="${acc.imageAlt}" class="max-w-xs max-h-32 object-cover rounded"></div>` : ''}
+            `;
+            return div;
+        }
+
+        // Update functions
+        function updateImage(index, field, value) {
+            if (contentData.images && contentData.images[index]) {
+                contentData.images[index][field] = value;
+            }
+        }
+
+        function updateAccommodation(index, field, value) {
+            if (contentData.accommodations && contentData.accommodations[index]) {
+                contentData.accommodations[index][field] = value;
+            }
+        }
+
+        // Add functions
+        function addNewImage() {
+            if (!contentData.images) contentData.images = [];
+            contentData.images.push({
+                id: `image-${Date.now()}`,
+                src: '',
+                alt: ''
+            });
+            renderImages();
+        }
+
+        function addNewAccommodation() {
+            if (!contentData.accommodations) contentData.accommodations = [];
+            contentData.accommodations.push({
+                id: `accommodation-${Date.now()}`,
+                title: 'New Accommodation',
+                imageSrc: '',
+                imageAlt: '',
+                description: '',
+                buttonText: 'Book Now',
+                buttonLink: '#'
+            });
+            renderAccommodations();
+        }
+
+        // Remove functions
+        function removeImage(index) {
+            if (contentData.images && confirm('Are you sure you want to remove this image?')) {
+                contentData.images.splice(index, 1);
+                renderImages();
+            }
+        }
+
+        function removeAccommodation(index) {
+            if (contentData.accommodations && confirm('Are you sure you want to remove this accommodation?')) {
+                contentData.accommodations.splice(index, 1);
+                renderAccommodations();
+            }
+        }
+
+        // Save content function
+        function saveContent() {
+            const jsonString = JSON.stringify(contentData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'content.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showMessage('Content saved! Download the file and replace the existing content.json', 'success');
+            alert('Content exported! Replace the content.json file with the downloaded version.');
+        }
+    </script>
+</body>
+</html>
 
             async function loadAllContent() {
                 try {
