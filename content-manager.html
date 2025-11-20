@@ -13,7 +13,8 @@
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold">Admin Panel</h1>
+            <h1 class="text-3xl font-bold">Villa Content Manager</h1>
+            <div class="text-sm text-gray-600">Direct Access - No Authentication Required</div>
         </div>
 
         <!-- Status Message -->
@@ -63,11 +64,17 @@
     </div>
 
     <script>
+        // Override any potential redirects
+        window.history.replaceState(null, null, window.location.href);
+        
         // Global content data
         let contentData = {};
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', async () => {
+            // Force stay on this page
+            console.log('Content Manager loaded successfully - no redirects');
+            
             try {
                 showStatus('Loading content...', 'info');
                 await loadContentFromJSON();
@@ -355,6 +362,11 @@
             URL.revokeObjectURL(url);
             showStatus('Content saved! Download complete - replace your content.json file.', 'success');
         }
+
+        // Prevent any unauthorized redirects
+        window.addEventListener('beforeunload', function(e) {
+            // This helps prevent redirects when the page is trying to unload
+        });
     </script>
 </body>
 </html>

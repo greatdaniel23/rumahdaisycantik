@@ -80,7 +80,7 @@
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Logo -->
             <a href="#" class="flex items-center space-x-3">
-                <img id="logo-header" src="images/logo.png" alt="Logo" class="h-10 sm:h-12 w-auto" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo';">
+                <img id="logo-header" alt="Logo" class="lazy-image h-10 sm:h-12 w-auto opacity-0" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo'; this.classList.add('loaded');">
                 <span class="text-xl sm:text-2xl font-semibold text-gray-800 hidden sm:block">Rumah Daisy Cantik</span>
             </a>
 
@@ -189,7 +189,6 @@
                     <div class="image-container relative overflow-hidden rounded-2xl shadow-2xl">
                         <div class="image-placeholder absolute inset-0 bg-gray-200"></div>
                         <img id="welcome-pool-view" 
-                             data-src="https://rumahdaisycantik.com/wp-content/uploads/IMG_7566-edited-scaled.jpg" 
                              alt="Rumah Daisy Cantik Pool View" 
                              class="lazy-image w-full h-auto transform hover:scale-105 transition-all duration-500 opacity-0" 
                              loading="lazy"
@@ -352,7 +351,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                 <!-- About -->
                 <div class="col-span-1 md:col-span-2 lg:col-span-1">
-                    <img id="logo-footer" src="images/logo.png" alt="Logo" class="h-20 w-auto mb-4" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo';">
+                    <img id="logo-footer" alt="Logo" class="lazy-image h-20 w-auto mb-4 opacity-0" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://placehold.co/100x100/FFFFFF/E0E0E0?text=Logo'; this.classList.add('loaded');">
                     <p class="text-white text-sm">Br. Tohjiwa, Desa Kaba-Kaba, Kec. Kediri, Tabanan – Bali 82121</p>
                 </div>
 
@@ -854,12 +853,18 @@
                     const response = await fetch('content.json');
                     const content = await response.json();
 
-                    // Apply images
+                    // Apply images with direct loading
                     content.images.forEach(image => {
                         const imgElement = document.getElementById(image.id);
                         if (imgElement) {
-                            imgElement.src = image.src;
+                            // Set data-src for lazy loading compatibility
+                            imgElement.setAttribute('data-src', image.src);
                             imgElement.alt = image.alt;
+                            
+                            // Load all images immediately for better UX
+                            imgElement.src = image.src;
+                            imgElement.classList.add('loaded');
+                            imgElement.style.opacity = '1';
                         }
                     });
 
@@ -869,20 +874,35 @@
                     content.accommodations.forEach(pkg => {
                         const packageCard = document.createElement('div');
                         packageCard.className = 'bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-all duration-300';
-                        const imageData = ImageOptimizer.createPictureElement(pkg.imageSrc, pkg.imageAlt);
+                        
+                        // Try to use ImageOptimizer, fallback to simple img if it fails
+                        let imageData;
+                        try {
+                            imageData = ImageOptimizer.createPictureElement(pkg.imageSrc, pkg.imageAlt);
+                        } catch (error) {
+                            console.warn('ImageOptimizer failed, using simple image:', error);
+                            imageData = {
+                                sources: '',
+                                fallbackSrc: pkg.imageSrc,
+                                srcSet: pkg.imageSrc
+                            };
+                        }
+                        
                         packageCard.innerHTML = `
                             <div class="image-container relative h-64 overflow-hidden">
                                 <div class="image-placeholder absolute inset-0 bg-gray-200"></div>
                                 <picture class="w-full h-full">
                                     ${imageData.sources}
                                     <img data-src="${imageData.fallbackSrc}" 
+                                         src="${pkg.imageSrc}"
                                          data-srcset="${imageData.srcSet}"
                                          alt="${pkg.imageAlt}" 
-                                         class="lazy-image w-full h-full object-cover group-hover:scale-105 transition-all duration-500 opacity-0"
+                                         class="lazy-image w-full h-full object-cover group-hover:scale-105 transition-all duration-500 loaded"
                                          loading="lazy"
                                          decoding="async"
                                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
-                                         onerror="this.src='https://placehold.co/600x400/FFFFFF/E0E0E0?text=Image'; this.classList.add('loaded');">
+                                         style="opacity: 1;"
+                                         onerror="this.src='https://rumahdaisycantik.com/images/DSC07061.JPG'; this.classList.add('loaded');">
                                 </picture>
                             </div>
                             <div class="p-8">

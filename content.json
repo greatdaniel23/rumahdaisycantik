@@ -6,29 +6,29 @@
       "alt": "Logo"
     },
     {
-      "id": "welcome-pool-view",
-      "src": "images/DSC07061.JPG",
-      "alt": "Rumah Daisy Cantik Pool View"
-    },
-    {
       "id": "logo-footer",
       "src": "images/logo.png",
       "alt": "Logo"
+    },
+    {
+      "id": "welcome-pool-view",
+      "src": "https://rumahdaisycantik.com/images/DSC06701.JPG",
+      "alt": "Rumah Daisy Cantik Pool View"
     }
   ],
   "accommodations": [
     {
       "id": "package-1",
-      "imageSrc": "images/DSC07061.JPG",
+      "imageSrc": "https://rumahdaisycantik.com/images/Villa1/DSCF0009.jpg",
       "imageAlt": "Luxury Villa with Private Pool",
       "title": "Luxury Villa",
-      "description": "Experience the ultimate comfort in our luxury villas with a stunning private pool and jungle view.",
+      "description": "Experience the ultimate comfort in our luxury villas with a stunning private pool.",
       "buttonText": "Book This Villa",
       "buttonLink": "https://booking.com/villa-1"
     },
     {
       "id": "package-2",
-      "imageSrc": "images/DSC07061.JPG",
+      "imageSrc": "https://rumahdaisycantik.com/images/_EC15977.JPG",
       "imageAlt": "Family Room with Pool Access",
       "title": "Family Room",
       "description": "Spacious rooms perfect for families, with direct access to our main pool and lounge area.",
@@ -37,7 +37,7 @@
     },
     {
       "id": "package-3",
-      "imageSrc": "images/DSC07061.JPG",
+      "imageSrc": "https://rumahdaisycantik.com/images/DSC06701.JPG",
       "imageAlt": "Poolside Room with Lounge",
       "title": "Poolside Room",
       "description": "Cozy room with a beautiful poolside view and a comfortable lounge area.",
