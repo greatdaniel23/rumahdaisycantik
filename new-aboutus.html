@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah Daisy Cantik | Sanctuary in Tabanan</title>
+    <meta name="description" content="Rumah Daisy Cantik is a boutique estate in Kaba-Kaba, Tabanan Bali offering private villas, retreats, stewardship programs, and authentic community connection.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://rumahdaisycantik.com/about.html">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Fonts: Cinzel for elegance (Titles), Lato for readability (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #F9F8F6; /* Warm off-white */
+            color: #4A4A4A;
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Cinzel', serif;
+        }
+        .hero-pattern {
+            background-color: #3d4c53;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239baeb5' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .fade-in-up {
+            animation: fadeInUp 1.2s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-stone-200" aria-label="Main Navigation">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="#" class="text-2xl font-semibold tracking-widest text-stone-800 serif-font flex items-center gap-2">
+                    <i data-lucide="flower" class="w-6 h-6 text-green-700"></i>
+                    RUMAH DAISY CANTIK
+                </a>
+                
+                <!-- Desktop Links -->
+                <div class="hidden md:flex space-x-8 items-center text-sm tracking-wider uppercase">
+                    <a href="#about" class="hover:text-green-700 transition">About Us</a>
+                    <a href="#estate" class="hover:text-green-700 transition">Estate</a>
+                    <a href="#values" class="hover:text-green-700 transition">Values</a>
+                    <a href="#stewardship" class="hover:text-green-700 transition">Stewardship</a>
+                    <a href="#experience" class="hover:text-green-700 transition">Experience</a>
+                    <a href="#sustainability" class="hover:text-green-700 transition">Sustainability</a>
+                    <button onclick="openModal()" class="border border-stone-800 px-5 py-2 hover:bg-stone-800 hover:text-white transition" aria-haspopup="dialog" aria-controls="contactModal">Inquire</button>
+                    <a href="https://booking.rumahdaisycantik.com" class="bg-green-700 text-white px-5 py-2 hover:bg-green-800 transition tracking-wide">Book Now</a>
+                </div>
+
+                <!-- Mobile Menu Icon -->
+                <div class="md:hidden">
+                    <button class="text-stone-800"><i data-lucide="menu"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="relative h-screen flex items-center justify-center overflow-hidden" role="banner">
+        <!-- Background Image Placeholder (Rice Paddies / Jungle vibe) -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" alt="Bali Rice Terrace" class="w-full h-full object-cover opacity-90">
+            <div class="absolute inset-0 bg-black/30"></div>
+        </div>
+
+        <div class="relative z-10 text-center text-white px-4 fade-in-up max-w-4xl">
+            <p class="text-sm md:text-base tracking-[0.3em] uppercase mb-4 text-green-100">Kaba-Kaba, Tabanan, Bali</p>
+            <h1 class="text-5xl md:text-7xl mb-6 serif-font font-light">More Than a Villa,<br>It's a Stewardship.</h1>
+            <p class="text-lg md:text-xl font-light max-w-2xl mx-auto mb-10 text-white/90">
+                A private 5,000m² estate nestled in the "Old Bali." Experience luxury rooted in community and nature.
+            </p>
+            <a href="#about" class="bg-white text-stone-900 px-8 py-3 uppercase tracking-widest text-xs hover:bg-green-50 transition">
+                Discover Our Story
+            </a>
+        </div>
+    </header>
+
+    <!-- ABOUT US (The Core Request) -->
+    <section id="about" class="py-24 bg-[#F9F8F6]" aria-labelledby="about-heading">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <!-- Text Content -->
+                <div>
+                    <span class="text-green-700 tracking-widest uppercase text-xs font-bold mb-2 block">Who We Are</span>
+                    <h2 id="about-heading" class="text-3xl md:text-4xl text-stone-800 mb-6 serif-font leading-relaxed">
+                        A Sanctuary Built on<br><span class="italic text-stone-500">Stewardship</span>.
+                    </h2>
+                    <p class="text-stone-600 mb-6 font-light leading-7">
+                        Located in the serene village of Kaba-Kaba, <strong>Rumah Daisy Cantik</strong> is not just a boutique hotel; it is a philosophy in practice. Managed by <em>Mary Swanson</em>, our estate operates on the belief that we are merely stewards of this beautiful land.
+                    </p>
+                    <p class="text-stone-600 mb-8 font-light leading-7">
+                        Unlike conventional resorts, we are deeply woven into the local fabric of Tabanan. Whether hosting the <em>Gesundheit Humanitarian Clowning Tour</em> or providing a quiet "home away from home" for solo travelers, every stay supports our commitment to community and cultural preservation.
+                    </p>
+                    
+                    <div class="flex gap-12 border-t border-stone-300 pt-8">
+                        <div>
+                            <span class="block text-3xl serif-font text-stone-800">5,150<span class="text-base align-top">sqm</span></span>
+                            <span class="text-xs uppercase tracking-widest text-stone-500">Land Stewardship</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl serif-font text-stone-800">6</span>
+                            <span class="text-xs uppercase tracking-widest text-stone-500">Exclusive Villas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visuals -->
+                <div class="relative">
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1573052905904-236b28488e36?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Private villa pool with tranquil atmosphere at Rumah Daisy Cantik" class="w-full h-[500px] object-cover shadow-2xl grayscale hover:grayscale-0 transition duration-700">
+                    <div class="absolute -bottom-6 -left-6 bg-white p-6 shadow-xl max-w-xs hidden md:block">
+                        <p class="serif-font text-lg italic text-stone-800">"It is a privilege to be a steward of this beautiful land."</p>
+                        <p class="text-xs mt-2 uppercase tracking-wide text-stone-500">— Mary Swanson</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Values -->
+    <section id="values" class="py-24 bg-white">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl serif-font text-stone-800 mb-4">Mission & Core Values</h2>
+                <p class="text-stone-600 max-w-2xl mx-auto font-light">We believe hospitality can nurture land, culture, and human connection. Each stay contributes to preservation, community empowerment, and mindful travel.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="p-6 bg-[#F9F8F6] border border-stone-200">
+                    <h3 class="serif-font text-xl mb-2 text-stone-800">Stewardship</h3>
+                    <p class="text-sm font-light leading-6">We treat the estate as borrowed from future generations—careful land management, water mindfulness, and respect for traditional boundaries.</p>
+                </div>
+                <div class="p-6 bg-[#F9F8F6] border border-stone-200">
+                    <h3 class="serif-font text-xl mb-2 text-stone-800">Community</h3>
+                    <p class="text-sm font-light leading-6">Local employment, fair wages, cultural initiatives, and hosting humanitarian programs strengthen Tabanan's social fabric.</p>
+                </div>
+                <div class="p-6 bg-[#F9F8F6] border border-stone-200">
+                    <h3 class="serif-font text-xl mb-2 text-stone-800">Mindful Experience</h3>
+                    <p class="text-sm font-light leading-6">Intentional spaces for rest, creativity, and reflection—free from overstimulation yet rich in authenticity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stewardship & Community Impact -->
+    <section id="stewardship" class="py-24 bg-[#F9F8F6]">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                <div>
+                    <h2 class="text-3xl serif-font text-stone-800 mb-6">Stewardship & Community Impact</h2>
+                    <p class="text-stone-600 font-light leading-7 mb-6">From hosting the <em>Gesundheit Humanitarian Clowning Tour</em> to supporting rice field caretakers and village artisans, our initiatives align hospitality with social contribution.</p>
+                    <ul class="space-y-4 text-sm text-stone-600 font-light">
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Local staffing & training pathways for youth in Kaba-Kaba.</li>
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Space provided for wellness circles, art gatherings, and cultural rehearsals.</li>
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Ingredient sourcing from nearby growers—fresh fruit, heritage rice, village produce.</li>
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Quiet zones preserved for wildlife movement and seasonal bird nesting.</li>
+                    </ul>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-white p-5 border border-stone-200">
+                        <h3 class="serif-font text-lg mb-2 text-stone-800">Humanitarian Hosting</h3>
+                        <p class="text-sm font-light leading-6">Meaningful stays for mission-focused groups in need of grounding space.</p>
+                    </div>
+                    <div class="bg-white p-5 border border-stone-200">
+                        <h3 class="serif-font text-lg mb-2 text-stone-800">Cultural Continuity</h3>
+                        <p class="text-sm font-light leading-6">Supporting ceremonies and traditional rhythm without disruption.</p>
+                    </div>
+                    <div class="bg-white p-5 border border-stone-200">
+                        <h3 class="serif-font text-lg mb-2 text-stone-800">Skills Development</h3>
+                        <p class="text-sm font-light leading-6">Mentoring hospitality, language, and service ethics for local talent.</p>
+                    </div>
+                    <div class="bg-white p-5 border border-stone-200">
+                        <h3 class="serif-font text-lg mb-2 text-stone-800">Art & Expression</h3>
+                        <p class="text-sm font-light leading-6">Encouraging creative workshops and gentle performance spaces.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guest Experience -->
+    <section id="experience" class="py-24 bg-white">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl serif-font text-stone-800 mb-4">Guest Experience</h2>
+                <p class="text-stone-600 font-light max-w-2xl mx-auto">We curate calm, opportunity for movement, and genuine connection—without forced programming.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="p-6 bg-[#F9F8F6] border border-stone-200">
+                    <h3 class="serif-font text-lg mb-2">Central Pool</h3>
+                    <p class="text-sm font-light leading-6">Sunrise reflection or evening cool-off—shared yet spacious.</p>
+                </div>
+                <div class="p-6 bg-[#F9F8F6] border border-stone-200">
+                    <h3 class="serif-font text-lg mb-2">Yoga / Movement Hall</h3>
+                    <p class="text-sm font-light leading-6">Air-conditioned space for retreats, workshops, and mindful gatherings.</p>
+                </div>
+                <div class="p-6 bg-[#F9F8F6] border border-stone-200">
+                    <h3 class="serif-font text-lg mb-2">Breakfast & Nourishment</h3>
+                    <p class="text-sm font-light leading-6">Simple, fresh, locally sourced—aligned with season and rhythm.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sustainability & Animals -->
+    <section id="sustainability" class="py-24 bg-[#F9F8F6]">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+                <div>
+                    <h2 class="text-3xl serif-font text-stone-800 mb-6">Sustainability & Animal Care</h2>
+                    <p class="text-stone-600 font-light leading-7 mb-6">Rescue animals roam with dignity—each guest is invited to respect their space. Environmental choices minimize footprint while nurturing balance.</p>
+                    <ul class="space-y-4 text-sm text-stone-600 font-light">
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Water efficiency and mindful laundry cycles.</li>
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Gentle night lighting to protect nocturnal movement.</li>
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Organic waste repurposed where viable.</li>
+                        <li class="flex items-start gap-3"><span class="text-green-700">•</span> Encouraging low-impact personal routines.</li>
+                    </ul>
+                </div>
+                <div class="relative">
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Natural landscape supporting sustainable hospitality" class="w-full h-[480px] object-cover shadow-xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estate teaser rename of original Villas section anchor -->
+
+    <!-- Quick Glance at Offerings -->
+    <section id="estate" class="py-20 bg-white" aria-label="Estate Overview">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl serif-font text-stone-800">The Estate</h2>
+                <div class="w-16 h-0.5 bg-green-700 mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="group cursor-pointer">
+                    <div class="overflow-hidden h-64 mb-4">
+                        <img loading="lazy" src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Luxury private villa exterior with pool" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-xl serif-font text-stone-800 mb-2">Luxury Private Villas</h3>
+                    <p class="text-sm text-stone-500 font-light">With private pools and jungle views for ultimate seclusion.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="group cursor-pointer">
+                    <div class="overflow-hidden h-64 mb-4">
+                        <img loading="lazy" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Open retreat and gathering hall space" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-xl serif-font text-stone-800 mb-2">Retreats & Events</h3>
+                    <p class="text-sm text-stone-500 font-light">Large AC meeting hall and communal dining for yoga or corporate groups.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="group cursor-pointer">
+                    <div class="overflow-hidden h-64 mb-4">
+                        <img loading="lazy" src="https://images.unsplash.com/photo-1519415510236-718bdfcd4788?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Community and humanitarian involvement symbolic imagery" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                    </div>
+                    <h3 class="text-xl serif-font text-stone-800 mb-2">Community Impact</h3>
+                    <p class="text-sm text-stone-500 font-light">Home to humanitarian tours and local cultural initiatives.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location / Footer -->
+    <footer class="bg-[#2C3333] text-stone-300 py-16">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+                <h4 class="text-white serif-font text-xl mb-6">Rumah Daisy Cantik</h4>
+                <p class="text-sm font-light leading-6 max-w-sm">
+                    A hidden gem in Kaba-Kaba, Tabanan. Experiencing the "Rice Bowl" of Bali in its most authentic form.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-white serif-font text-lg mb-6">Contact</h4>
+                <div class="space-y-3 text-sm font-light">
+                    <p class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4"></i> Banjar Tohjiwa, Desa Kaba-Kaba, Tabanan</p>
+                    <p class="flex items-center gap-2"><i data-lucide="mail" class="w-4"></i> rumahdaisycantikreservations@gmail.com</p>
+                    <p class="flex items-center gap-2"><i data-lucide="phone" class="w-4"></i> +62 822 2119 3425</p>
+                    <p class="flex items-center gap-2"><i data-lucide="message-circle" class="w-4"></i> <a href="https://wa.me/6282221193425" class="hover:text-white transition" aria-label="WhatsApp Reservations">WhatsApp Reservations</a></p>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white serif-font text-lg mb-6">Connect</h4>
+                <p class="text-xs uppercase tracking-widest text-stone-500 mb-4">Social Media</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white transition"><i data-lucide="instagram"></i></a>
+                    <a href="#" class="hover:text-white transition"><i data-lucide="facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-12 pt-8 border-t border-stone-700 text-xs text-stone-500 uppercase tracking-widest">
+            &copy; 2025 Rumah Daisy Cantik. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Simple Inquiry Modal -->
+    <div id="contactModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+        <div class="bg-white p-8 max-w-md w-full shadow-2xl relative" id="contactModalPanel">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800" aria-label="Close inquiry form">
+                <i data-lucide="x"></i>
+            </button>
+            <h3 id="contactModalTitle" class="serif-font text-2xl text-stone-800 mb-2">Begin Your Journey</h3>
+            <p class="text-sm text-stone-500 mb-6">Send us a message for villa availability or retreat planning.</p>
+            <form class="space-y-4" id="inquiryForm">
+                <input type="text" placeholder="Your Name" class="w-full border-b border-stone-300 py-2 focus:outline-none focus:border-green-700 text-sm" required>
+                <input type="email" placeholder="Email Address" class="w-full border-b border-stone-300 py-2 focus:outline-none focus:border-green-700 text-sm" required>
+                <textarea placeholder="Message" rows="3" class="w-full border-b border-stone-300 py-2 focus:outline-none focus:border-green-700 text-sm" required></textarea>
+                <button class="w-full bg-stone-800 text-white py-3 text-xs uppercase tracking-widest hover:bg-green-800 transition" type="submit">Send Inquiry</button>
+            </form>
+            <div id="inquirySuccess" class="hidden mt-6 p-4 bg-green-50 border border-green-200 text-sm text-green-700">Thank you. We will contact you shortly.</div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const modal = document.getElementById('contactModal');
+        const modalPanel = document.getElementById('contactModalPanel');
+        const inquiryForm = document.getElementById('inquiryForm');
+        const successMessage = document.getElementById('inquirySuccess');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // autofocus first input
+            const firstInput = inquiryForm.querySelector('input');
+            if (firstInput) firstInput.focus();
+            document.addEventListener('keydown', escHandler);
+            trapFocus();
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.removeEventListener('keydown', escHandler);
+            successMessage.classList.add('hidden');
+        }
+
+        function escHandler(e) {
+            if (e.key === 'Escape') closeModal();
+        }
+
+        // Basic focus trap
+        function trapFocus() {
+            const focusable = modalPanel.querySelectorAll('button, [href], input, textarea, select');
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            document.addEventListener('keydown', function(e) {
+                if (!modal.classList.contains('hidden') && e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            });
+        }
+
+        inquiryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            successMessage.classList.remove('hidden');
+            inquiryForm.reset();
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+    </script>
+</body>
+</html>

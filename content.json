@@ -24,7 +24,7 @@
       "title": "Luxury Villa",
       "description": "Experience the ultimate comfort in our luxury villas with a stunning private pool.",
       "buttonText": "Book This Villa",
-      "buttonLink": "https://booking.com/villa-1"
+      "buttonLink": "https://booking.rumahdaisycantik.com"
     },
     {
       "id": "package-2",
@@ -33,7 +33,7 @@
       "title": "Family Room",
       "description": "Spacious rooms perfect for families, with direct access to our main pool and lounge area.",
       "buttonText": "View Details",
-      "buttonLink": "#"
+      "buttonLink": "https://booking.rumahdaisycantik.com"
     },
     {
       "id": "package-3",
@@ -42,7 +42,7 @@
       "title": "Poolside Room",
       "description": "Cozy room with a beautiful poolside view and a comfortable lounge area.",
       "buttonText": "View Details",
-      "buttonLink": "#"
+      "buttonLink": "https://booking.rumahdaisycantik.com"
     }
   ],
   "popup": {
@@ -58,7 +58,7 @@
     {
       "id": "cta-book-now",
       "text": "Reserve Now!",
-      "link": "https://new-booking-link.com/"
+      "link": "https://booking.rumahdaisycantik.com"
     },
     {
       "id": "hero-ask-us",

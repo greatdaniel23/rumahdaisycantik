@@ -982,24 +982,12 @@
             applyContent();
             fetchGoogleReviews();
 
-            // Airbnb booking form redirection
+            // Booking form redirection
             const searchBtn = document.getElementById('search-availability-btn');
-            const bookingForm = document.getElementById('booking-form');
 
             searchBtn.addEventListener('click', () => {
-                const checkIn = document.getElementById('check-in').value;
-                const checkOut = document.getElementById('check-out').value;
-                const guests = document.getElementById('guests').value;
-
-                if (!checkIn || !checkOut) {
-                    alert('Please select both a check-in and check-out date.');
-                    return;
-                }
-
-                const airbnbBaseUrl = 'https://www.airbnb.com/rooms/1157539905835639687';
-                const url = `${airbnbBaseUrl}?check_in=${checkIn}&guests=${guests}&adults=${guests}&check_out=${checkOut}`;
-
-                window.open(url, '_blank');
+                // Direct to booking website without date parameters
+                window.open('https://booking.rumahdaisycantik.com', '_blank');
             });
         });
 
